@@ -1,0 +1,203 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > HetznerCloudHttpClient</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">dev.tomr.hcloud.http</a>
+</div>
+
+<h1>Coverage Summary for Class: HetznerCloudHttpClient (dev.tomr.hcloud.http)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">HetznerCloudHttpClient</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (5/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (17/17)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">HetznerCloudHttpClient$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (6/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (18/18)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package dev.tomr.hcloud.http;
+&nbsp;
+&nbsp;import dev.tomr.hcloud.HetznerCloud;
+&nbsp;
+&nbsp;import java.io.IOException;
+&nbsp;import java.net.URI;
+&nbsp;import java.net.http.HttpClient;
+&nbsp;import java.net.http.HttpRequest;
+&nbsp;import java.time.Duration;
+&nbsp;
+&nbsp;import static java.lang.String.format;
+&nbsp;
+&nbsp;public class HetznerCloudHttpClient {
+&nbsp;
+&nbsp;    private static HetznerCloudHttpClient instance;
+&nbsp;
+&nbsp;    private final HttpClient httpClient;
+&nbsp;
+<b class="fc">&nbsp;    public HetznerCloudHttpClient() {</b>
+<b class="fc">&nbsp;        this.httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(5)).build();</b>
+<b class="fc">&nbsp;        instance = this;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static HetznerCloudHttpClient getInstance() {
+<b class="fc">&nbsp;        if (instance == null) {</b>
+<b class="fc">&nbsp;            instance = new HetznerCloudHttpClient();</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return instance;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public &lt;T extends HetznerJsonObject&gt; T sendHttpRequest(Class&lt;T&gt; clazz, String endpoint, RequestVerb requestVerb, String apiKey) throws IOException, InterruptedException {
+<b class="fc">&nbsp;        return sendHttpRequest(clazz, endpoint, requestVerb, apiKey, null);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    public &lt;T extends HetznerJsonObject&gt; T sendHttpRequest(Class&lt;T&gt; clazz, String endpoint, RequestVerb requestVerb, String apiKey, String body) throws IOException, InterruptedException {
+<b class="fc">&nbsp;        HttpRequest request = createHttpRequest(endpoint, requestVerb, apiKey, body);</b>
+<b class="fc">&nbsp;        return (T) httpClient.send(request, new JacksonBodyHandler&lt;&gt;(clazz)).body();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private HttpRequest createHttpRequest(String uri, RequestVerb requestVerb, String apiKey, String body) {
+<b class="fc">&nbsp;        HttpRequest.Builder builder = HttpRequest.newBuilder()</b>
+<b class="fc">&nbsp;                .uri(URI.create(uri))</b>
+<b class="fc">&nbsp;                .header(&quot;Authorization&quot;, format(&quot;Bearer %s&quot;, apiKey))</b>
+<b class="fc">&nbsp;                .header(&quot;Content-Type&quot;, &quot;application/json&quot;);</b>
+<b class="pc">&nbsp;        builder = switch (requestVerb) {</b>
+<b class="fc">&nbsp;            case GET -&gt; builder.GET();</b>
+<b class="fc">&nbsp;            case POST -&gt; builder.POST(HttpRequest.BodyPublishers.ofString(body));</b>
+&nbsp;        };
+<b class="fc">&nbsp;        return builder.build();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-10-18 21:04</div>
+</div>
+</body>
+</html>

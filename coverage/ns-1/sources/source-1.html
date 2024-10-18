@@ -1,0 +1,161 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > HetznerCloud</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">dev.tomr.hcloud</a>
+</div>
+
+<h1>Coverage Summary for Class: HetznerCloud (dev.tomr.hcloud)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">HetznerCloud</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (6/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (17/17)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package dev.tomr.hcloud;
+&nbsp;
+&nbsp;import com.fasterxml.jackson.databind.ObjectMapper;
+&nbsp;import org.apache.logging.log4j.LogManager;
+&nbsp;import org.apache.logging.log4j.Logger;
+&nbsp;
+&nbsp;public class HetznerCloud {
+<b class="fc">&nbsp;    protected static final Logger logger = LogManager.getLogger();</b>
+<b class="fc">&nbsp;    private static final ObjectMapper objectMapper = new ObjectMapper();</b>
+<b class="fc">&nbsp;    private static String HETZNER_CLOUD_HOST = &quot;https://api.hetzner.cloud/v1/&quot;;</b>
+&nbsp;
+&nbsp;    private static HetznerCloud instance;
+&nbsp;
+&nbsp;    private String apiKey;
+&nbsp;    private final String host;
+&nbsp;
+<b class="fc">&nbsp;    public HetznerCloud(String apiKey) {</b>
+<b class="fc">&nbsp;        this.apiKey = apiKey;</b>
+<b class="fc">&nbsp;        this.host = HETZNER_CLOUD_HOST;</b>
+<b class="fc">&nbsp;        instance = this;</b>
+&nbsp;    }
+&nbsp;
+<b class="fc">&nbsp;    public HetznerCloud(String apiKey, String host) {</b>
+<b class="fc">&nbsp;        this.apiKey = apiKey;</b>
+<b class="fc">&nbsp;        this.host = host;</b>
+<b class="fc">&nbsp;        instance = this;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static HetznerCloud getInstance() {
+<b class="fc">&nbsp;        if (instance == null) {</b>
+<b class="fc">&nbsp;            instance = new HetznerCloud(null);</b>
+<b class="fc">&nbsp;            logger.warn(&quot;Hetzner Cloud API Key needs to be set&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return instance;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setApiKey(String apiKey) {
+<b class="fc">&nbsp;        this.apiKey = apiKey;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static ObjectMapper getObjectMapper() {
+<b class="fc">&nbsp;        return objectMapper;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-10-18 21:04</div>
+</div>
+</body>
+</html>
