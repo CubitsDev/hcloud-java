@@ -1,0 +1,175 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > PlacementGroup</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">dev.tomr.hcloud.resources.common</a>
+</div>
+
+<h1>Coverage Summary for Class: PlacementGroup (dev.tomr.hcloud.resources.common)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PlacementGroup</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (13/13)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (19/19)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package dev.tomr.hcloud.resources.common;
+&nbsp;
+&nbsp;import java.util.Date;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Map;
+&nbsp;
+&nbsp;public class PlacementGroup {
+&nbsp;    private Date created;
+&nbsp;    private int id;
+&nbsp;    private Map&lt;String, String&gt; labels;
+&nbsp;    private String name;
+&nbsp;    private List&lt;Integer&gt; servers;
+&nbsp;    private String type;
+&nbsp;
+<b class="fc">&nbsp;    public PlacementGroup(Date created, int id, Map&lt;String, String&gt; labels, String name, List&lt;Integer&gt; servers, String type) {</b>
+<b class="fc">&nbsp;        this.created = created;</b>
+<b class="fc">&nbsp;        this.id = id;</b>
+<b class="fc">&nbsp;        this.labels = labels;</b>
+<b class="fc">&nbsp;        this.name = name;</b>
+<b class="fc">&nbsp;        this.servers = servers;</b>
+<b class="fc">&nbsp;        this.type = type;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Date getCreated() {
+<b class="fc">&nbsp;        return created;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setCreated(Date created) {
+<b class="fc">&nbsp;        this.created = created;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public int getId() {
+<b class="fc">&nbsp;        return id;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setId(int id) {
+<b class="fc">&nbsp;        this.id = id;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Map&lt;String, String&gt; getLabels() {
+<b class="fc">&nbsp;        return labels;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setLabels(Map&lt;String, String&gt; labels) {
+<b class="fc">&nbsp;        this.labels = labels;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getName() {
+<b class="fc">&nbsp;        return name;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setName(String name) {
+<b class="fc">&nbsp;        this.name = name;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public List&lt;Integer&gt; getServers() {
+<b class="fc">&nbsp;        return servers;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setServers(List&lt;Integer&gt; servers) {
+<b class="fc">&nbsp;        this.servers = servers;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getType() {
+<b class="fc">&nbsp;        return type;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setType(String type) {
+<b class="fc">&nbsp;        this.type = type;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-10-25 20:19</div>
+</div>
+</body>
+</html>
