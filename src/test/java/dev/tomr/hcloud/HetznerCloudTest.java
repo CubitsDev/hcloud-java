@@ -1,5 +1,6 @@
 package dev.tomr.hcloud;
 
+import dev.tomr.hcloud.listener.ListenerManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -50,6 +51,13 @@ class HetznerCloudTest {
         Field field = instance.getClass().getDeclaredField("apiKey");
         field.setAccessible(true);
         assertEquals("apiKey", (String) field.get(instance));
+    }
+
+    @Test
+    @DisplayName("Calling getListenerManager returns the listener manager")
+    void callingGetListenerManagerReturnsTheListenerManager() {
+        ListenerManager listenerManager = ListenerManager.getInstance();
+        assertEquals(listenerManager, HetznerCloud.getListenerManager());
     }
 
 }
