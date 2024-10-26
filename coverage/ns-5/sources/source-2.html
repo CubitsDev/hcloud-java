@@ -5,7 +5,7 @@
 <html id="htmlId">
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
-  <title>Coverage Report > Datacenter</title>
+  <title>Coverage Report > ServerChangeListener</title>
   <style type="text/css">
     @import "../../css/coverage.css";
     @import "../../css/idea.min.css";
@@ -19,10 +19,10 @@
 <div class="breadCrumbs">
 Current scope:     <a href="../../index.html">all classes</a>
     <span class="separator">|</span>
-    <a href="../index.html">dev.tomr.hcloud.resources.common</a>
+    <a href="../index.html">dev.tomr.hcloud.listener</a>
 </div>
 
-<h1>Coverage Summary for Class: Datacenter (dev.tomr.hcloud.resources.common)</h1>
+<h1>Coverage Summary for Class: ServerChangeListener (dev.tomr.hcloud.listener)</h1>
 
 <table class="coverageStats">
 <tr>
@@ -41,7 +41,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 </th>
 </tr>
 <tr>
-  <td class="name">Datacenter</td>
+  <td class="name">ServerChangeListener</td>
 <td class="coverageStat">
   <span class="percent">
     100%
@@ -55,7 +55,7 @@ Current scope:     <a href="../../index.html">all classes</a>
     100%
   </span>
   <span class="absValue">
-    (11/11)
+    (3/3)
   </span>
 </td>
 <td class="coverageStat">
@@ -63,7 +63,7 @@ Current scope:     <a href="../../index.html">all classes</a>
     100%
   </span>
   <span class="absValue">
-    (16/16)
+    (6/6)
   </span>
 </td>
 </tr>
@@ -75,64 +75,26 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 
 <pre>
-<code class="sourceCode" id="sourceCode">&nbsp;package dev.tomr.hcloud.resources.common;
+<code class="sourceCode" id="sourceCode">&nbsp;package dev.tomr.hcloud.listener;
 &nbsp;
-&nbsp;import com.fasterxml.jackson.annotation.JsonProperty;
+&nbsp;import dev.tomr.hcloud.HetznerCloud;
+&nbsp;import dev.tomr.hcloud.resources.server.Server;
+&nbsp;import org.apache.logging.log4j.LogManager;
+&nbsp;import org.apache.logging.log4j.Logger;
 &nbsp;
-&nbsp;public class Datacenter{
-&nbsp;    private String description;
-&nbsp;    private Integer id;
-&nbsp;    private Location location;
-&nbsp;    private String name;
-&nbsp;    @JsonProperty(&quot;server_types&quot;)
-&nbsp;    private ServerTypes serverTypes;
+&nbsp;import java.beans.PropertyChangeEvent;
+&nbsp;import java.beans.PropertyChangeListener;
 &nbsp;
-<b class="fc">&nbsp;    public Datacenter(String description, Integer id, Location location, String name, ServerTypes serverTypes) {</b>
-<b class="fc">&nbsp;        this.description = description;</b>
-<b class="fc">&nbsp;        this.id = id;</b>
-<b class="fc">&nbsp;        this.location = location;</b>
-<b class="fc">&nbsp;        this.name = name;</b>
-<b class="fc">&nbsp;        this.serverTypes = serverTypes;</b>
-&nbsp;    }
+<b class="fc">&nbsp;public class ServerChangeListener implements PropertyChangeListener {</b>
+<b class="fc">&nbsp;    protected static final Logger logger = LogManager.getLogger();</b>
 &nbsp;
-&nbsp;    public String getDescription() {
-<b class="fc">&nbsp;        return description;</b>
-&nbsp;    }
-&nbsp;
-&nbsp;    public void setDescription(String description) {
-<b class="fc">&nbsp;        this.description = description;</b>
-&nbsp;    }
-&nbsp;
-&nbsp;    public Integer getId() {
-<b class="fc">&nbsp;        return id;</b>
-&nbsp;    }
-&nbsp;
-&nbsp;    public void setId(Integer id) {
-<b class="fc">&nbsp;        this.id = id;</b>
-&nbsp;    }
-&nbsp;
-&nbsp;    public Location getLocation() {
-<b class="fc">&nbsp;        return location;</b>
-&nbsp;    }
-&nbsp;
-&nbsp;    public void setLocation(Location location) {
-<b class="fc">&nbsp;        this.location = location;</b>
-&nbsp;    }
-&nbsp;
-&nbsp;    public String getName() {
-<b class="fc">&nbsp;        return name;</b>
-&nbsp;    }
-&nbsp;
-&nbsp;    public void setName(String name) {
-<b class="fc">&nbsp;        this.name = name;</b>
-&nbsp;    }
-&nbsp;
-&nbsp;    public ServerTypes getServerTypes() {
-<b class="fc">&nbsp;        return serverTypes;</b>
-&nbsp;    }
-&nbsp;
-&nbsp;    public void setServerTypes(ServerTypes serverTypes) {
-<b class="fc">&nbsp;        this.serverTypes = serverTypes;</b>
+&nbsp;    @Override
+&nbsp;    public void propertyChange(PropertyChangeEvent evt) {
+<b class="fc">&nbsp;        Server server = (Server) evt.getSource();</b>
+&nbsp;        //todo handle incoming changes to send API request
+<b class="fc">&nbsp;        logger.info(&quot;Server changed: &quot; + evt.getPropertyName());</b>
+<b class="fc">&nbsp;        logger.info(&quot;Server: &quot; + evt.getOldValue() + &quot; -&gt; &quot; + evt.getNewValue());</b>
+<b class="fc">&nbsp;        HetznerCloud.getServiceManager().getServerService().serverNameOrLabelUpdate(evt.getPropertyName(), evt.getNewValue(), server);</b>
 &nbsp;    }
 &nbsp;}
 </code>
@@ -158,7 +120,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2024-10-25 20:19</div>
+    <div style="float:right;">generated on 2024-10-26 16:29</div>
 </div>
 </body>
 </html>

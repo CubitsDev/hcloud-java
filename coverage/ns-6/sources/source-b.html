@@ -1,0 +1,248 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ServerType</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">dev.tomr.hcloud.resources.common</a>
+</div>
+
+<h1>Coverage Summary for Class: ServerType (dev.tomr.hcloud.resources.common)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ServerType</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (27/27)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (40/40)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package dev.tomr.hcloud.resources.common;
+&nbsp;
+&nbsp;import com.fasterxml.jackson.annotation.JsonProperty;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;public class ServerType {
+&nbsp;    private String architecture;
+&nbsp;    private Integer cores;
+&nbsp;    @JsonProperty(&quot;cpu_type&quot;)
+&nbsp;    private String cpuType;
+&nbsp;    private boolean deprecated;
+&nbsp;    private Deprecation deprecation;
+&nbsp;    private String description;
+&nbsp;    private Integer disk;
+&nbsp;    private Integer id;
+&nbsp;    @JsonProperty(&quot;included_traffic&quot;)
+&nbsp;    private Object includedTraffic;
+&nbsp;    private Integer memory;
+&nbsp;    private String name;
+&nbsp;    private List&lt;Price&gt; prices;
+&nbsp;    @JsonProperty(&quot;storage_type&quot;)
+&nbsp;    private String storageType;
+&nbsp;
+<b class="fc">&nbsp;    public ServerType(String architecture, Integer cores, String cpuType, boolean deprecated, Deprecation deprecation, String description, Integer disk, Integer id, Object includedTraffic, Integer memory, String name, List&lt;Price&gt; prices, String storageType) {</b>
+<b class="fc">&nbsp;        this.architecture = architecture;</b>
+<b class="fc">&nbsp;        this.cores = cores;</b>
+<b class="fc">&nbsp;        this.cpuType = cpuType;</b>
+<b class="fc">&nbsp;        this.deprecated = deprecated;</b>
+<b class="fc">&nbsp;        this.deprecation = deprecation;</b>
+<b class="fc">&nbsp;        this.description = description;</b>
+<b class="fc">&nbsp;        this.disk = disk;</b>
+<b class="fc">&nbsp;        this.id = id;</b>
+<b class="fc">&nbsp;        this.includedTraffic = includedTraffic;</b>
+<b class="fc">&nbsp;        this.memory = memory;</b>
+<b class="fc">&nbsp;        this.name = name;</b>
+<b class="fc">&nbsp;        this.prices = prices;</b>
+<b class="fc">&nbsp;        this.storageType = storageType;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getArchitecture() {
+<b class="fc">&nbsp;        return architecture;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setArchitecture(String architecture) {
+<b class="fc">&nbsp;        this.architecture = architecture;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Integer getCores() {
+<b class="fc">&nbsp;        return cores;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setCores(Integer cores) {
+<b class="fc">&nbsp;        this.cores = cores;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getCpuType() {
+<b class="fc">&nbsp;        return cpuType;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setCpuType(String cpuType) {
+<b class="fc">&nbsp;        this.cpuType = cpuType;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public boolean isDeprecated() {
+<b class="fc">&nbsp;        return deprecated;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setDeprecated(boolean deprecated) {
+<b class="fc">&nbsp;        this.deprecated = deprecated;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Deprecation getDeprecation() {
+<b class="fc">&nbsp;        return deprecation;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setDeprecation(Deprecation deprecation) {
+<b class="fc">&nbsp;        this.deprecation = deprecation;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getDescription() {
+<b class="fc">&nbsp;        return description;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setDescription(String description) {
+<b class="fc">&nbsp;        this.description = description;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Integer getDisk() {
+<b class="fc">&nbsp;        return disk;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setDisk(Integer disk) {
+<b class="fc">&nbsp;        this.disk = disk;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Integer getId() {
+<b class="fc">&nbsp;        return id;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setId(Integer id) {
+<b class="fc">&nbsp;        this.id = id;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Object getIncludedTraffic() {
+<b class="fc">&nbsp;        return includedTraffic;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setIncludedTraffic(Object includedTraffic) {
+<b class="fc">&nbsp;        this.includedTraffic = includedTraffic;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Integer getMemory() {
+<b class="fc">&nbsp;        return memory;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setMemory(Integer memory) {
+<b class="fc">&nbsp;        this.memory = memory;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getName() {
+<b class="fc">&nbsp;        return name;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setName(String name) {
+<b class="fc">&nbsp;        this.name = name;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public List&lt;Price&gt; getPrices() {
+<b class="fc">&nbsp;        return prices;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setPrices(List&lt;Price&gt; prices) {
+<b class="fc">&nbsp;        this.prices = prices;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getStorageType() {
+<b class="fc">&nbsp;        return storageType;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setStorageType(String storageType) {
+<b class="fc">&nbsp;        this.storageType = storageType;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-10-26 16:29</div>
+</div>
+</body>
+</html>

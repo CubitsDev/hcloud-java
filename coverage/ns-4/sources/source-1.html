@@ -5,7 +5,7 @@
 <html id="htmlId">
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
-  <title>Coverage Report > ListenerManager</title>
+  <title>Coverage Report > ServerDTO</title>
   <style type="text/css">
     @import "../../css/coverage.css";
     @import "../../css/idea.min.css";
@@ -19,25 +19,18 @@
 <div class="breadCrumbs">
 Current scope:     <a href="../../index.html">all classes</a>
     <span class="separator">|</span>
-    <a href="../index.html">dev.tomr.hcloud.listener</a>
+    <a href="../index.html">dev.tomr.hcloud.http.model</a>
 </div>
 
-<h1>Coverage Summary for Class: ListenerManager (dev.tomr.hcloud.listener)</h1>
+<h1>Coverage Summary for Class: ServerDTO (dev.tomr.hcloud.http.model)</h1>
 
 <table class="coverageStats">
+
 <tr>
   <th class="name">Class</th>
 <th class="coverageStat 
 ">
-  Class, %
-</th>
-<th class="coverageStat 
-">
   Method, %
-</th>
-<th class="coverageStat 
-">
-  Branch, %
 </th>
 <th class="coverageStat 
 ">
@@ -45,13 +38,13 @@ Current scope:     <a href="../../index.html">all classes</a>
 </th>
 </tr>
 <tr>
-  <td class="name">ListenerManager</td>
+  <td class="name">ServerDTO</td>
 <td class="coverageStat">
   <span class="percent">
     100%
   </span>
   <span class="absValue">
-    (1/1)
+    (47/47)
   </span>
 </td>
 <td class="coverageStat">
@@ -59,27 +52,48 @@ Current scope:     <a href="../../index.html">all classes</a>
     100%
   </span>
   <span class="absValue">
-    (3/3)
-  </span>
-</td>
-<td class="coverageStat">
-  <span class="percent">
-    100%
-  </span>
-  <span class="absValue">
-    (2/2)
-  </span>
-</td>
-<td class="coverageStat">
-  <span class="percent">
-    100%
-  </span>
-  <span class="absValue">
-    (7/7)
+    (69/69)
   </span>
 </td>
 </tr>
-
+  <tr>
+    <td class="name">ServerDTO$Builder</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (25/25)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (47/47)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (72/72)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (116/116)
+  </span>
+</td>
+</tr>
 </table>
 
 <br/>
@@ -87,27 +101,428 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 
 <pre>
-<code class="sourceCode" id="sourceCode">&nbsp;package dev.tomr.hcloud.listener;
+<code class="sourceCode" id="sourceCode">&nbsp;package dev.tomr.hcloud.http.model;
 &nbsp;
-&nbsp;public class ListenerManager {
-&nbsp;    public static ListenerManager instance;
+&nbsp;import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+&nbsp;import com.fasterxml.jackson.annotation.JsonInclude;
+&nbsp;import com.fasterxml.jackson.annotation.JsonProperty;
+&nbsp;import dev.tomr.hcloud.http.HetznerJsonObject;
+&nbsp;import dev.tomr.hcloud.resources.common.*;
 &nbsp;
-&nbsp;    private final ServerChangeListener serverChangeListener;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Map;
 &nbsp;
-<b class="fc">&nbsp;    private ListenerManager() {</b>
-<b class="fc">&nbsp;        this.serverChangeListener = new ServerChangeListener();</b>
-<b class="fc">&nbsp;        instance = this;</b>
+&nbsp;@JsonIgnoreProperties(ignoreUnknown = true)
+&nbsp;@JsonInclude(JsonInclude.Include.NON_NULL)
+&nbsp;public class ServerDTO extends HetznerJsonObject {
+&nbsp;    private Integer id;
+&nbsp;    @JsonProperty(&quot;backup_window&quot;)
+&nbsp;    private String backupWindow;
+&nbsp;    private String created;
+&nbsp;    private Datacenter datacenter;
+&nbsp;    private Image image;
+&nbsp;    @JsonProperty(&quot;included_traffic&quot;)
+&nbsp;    private Long includedTraffic;
+&nbsp;    @JsonProperty(&quot;ongoing_traffic&quot;)
+&nbsp;    private Long ingoingTraffic;
+&nbsp;    @JsonProperty(&quot;outgoing_traffic&quot;)
+&nbsp;    private Long outgoingTraffic;
+&nbsp;    private Iso iso;
+&nbsp;    private Map&lt;String, String&gt; labels;
+&nbsp;    @JsonProperty(&quot;load_balancers&quot;)
+&nbsp;    private List&lt;Object&gt; loadBalancers; // need to figure this out
+&nbsp;    private Boolean locked;
+&nbsp;    private String name;
+&nbsp;    @JsonProperty(&quot;placement_group&quot;)
+&nbsp;    private PlacementGroup placementGroup;
+&nbsp;    @JsonProperty(&quot;primary_disk_size&quot;)
+&nbsp;    private Long primaryDiskSize;
+&nbsp;    //todo change these to an actual class
+&nbsp;    @JsonProperty(&quot;private_net&quot;)
+&nbsp;    private List&lt;Object&gt; privateNet;
+&nbsp;    private Protection protection;
+&nbsp;    @JsonProperty(&quot;public_net&quot;)
+&nbsp;    private Object publicNet;
+&nbsp;    @JsonProperty(&quot;rescue_enabled&quot;)
+&nbsp;    private Boolean rescueEnabled;
+&nbsp;    @JsonProperty(&quot;server_type&quot;)
+&nbsp;    private ServerType serverType;
+&nbsp;    private String status;
+&nbsp;    private List&lt;Integer&gt; volumes;
+&nbsp;
+<b class="fc">&nbsp;    public ServerDTO() {</b>
 &nbsp;    }
 &nbsp;
-&nbsp;    public static ListenerManager getInstance() {
-<b class="fc">&nbsp;        if (instance == null) {</b>
-<b class="fc">&nbsp;            instance = new ListenerManager();</b>
+<b class="fc">&nbsp;    public ServerDTO(Integer id, String backupWindow, String created, Datacenter datacenter, Image image, Long includedTraffic, Long ingoingTraffic, Long outgoingTraffic, Iso iso, Map&lt;String, String&gt; labels, List&lt;Object&gt; loadBalancers, Boolean locked, String name, PlacementGroup placementGroup, Long primaryDiskSize, List&lt;Object&gt; privateNet, Protection protection, Object publicNet, Boolean rescueEnabled, ServerType serverType, String status, List&lt;Integer&gt; volumes) {</b>
+<b class="fc">&nbsp;        this.id = id;</b>
+<b class="fc">&nbsp;        this.backupWindow = backupWindow;</b>
+<b class="fc">&nbsp;        this.created = created;</b>
+<b class="fc">&nbsp;        this.datacenter = datacenter;</b>
+<b class="fc">&nbsp;        this.image = image;</b>
+<b class="fc">&nbsp;        this.includedTraffic = includedTraffic;</b>
+<b class="fc">&nbsp;        this.ingoingTraffic = ingoingTraffic;</b>
+<b class="fc">&nbsp;        this.outgoingTraffic = outgoingTraffic;</b>
+<b class="fc">&nbsp;        this.iso = iso;</b>
+<b class="fc">&nbsp;        this.labels = labels;</b>
+<b class="fc">&nbsp;        this.loadBalancers = loadBalancers;</b>
+<b class="fc">&nbsp;        this.locked = locked;</b>
+<b class="fc">&nbsp;        this.name = name;</b>
+<b class="fc">&nbsp;        this.placementGroup = placementGroup;</b>
+<b class="fc">&nbsp;        this.primaryDiskSize = primaryDiskSize;</b>
+<b class="fc">&nbsp;        this.privateNet = privateNet;</b>
+<b class="fc">&nbsp;        this.protection = protection;</b>
+<b class="fc">&nbsp;        this.publicNet = publicNet;</b>
+<b class="fc">&nbsp;        this.rescueEnabled = rescueEnabled;</b>
+<b class="fc">&nbsp;        this.serverType = serverType;</b>
+<b class="fc">&nbsp;        this.status = status;</b>
+<b class="fc">&nbsp;        this.volumes = volumes;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Integer getId() {
+<b class="fc">&nbsp;        return id;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setId(Integer id) {
+<b class="fc">&nbsp;        this.id = id;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getBackupWindow() {
+<b class="fc">&nbsp;        return backupWindow;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setBackupWindow(String backupWindow) {
+<b class="fc">&nbsp;        this.backupWindow = backupWindow;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getCreated() {
+<b class="fc">&nbsp;        return created;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setCreated(String created) {
+<b class="fc">&nbsp;        this.created = created;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Datacenter getDatacenter() {
+<b class="fc">&nbsp;        return datacenter;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setDatacenter(Datacenter datacenter) {
+<b class="fc">&nbsp;        this.datacenter = datacenter;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Image getImage() {
+<b class="fc">&nbsp;        return image;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setImage(Image image) {
+<b class="fc">&nbsp;        this.image = image;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Long getIncludedTraffic() {
+<b class="fc">&nbsp;        return includedTraffic;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setIncludedTraffic(Long includedTraffic) {
+<b class="fc">&nbsp;        this.includedTraffic = includedTraffic;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Long getIngoingTraffic() {
+<b class="fc">&nbsp;        return ingoingTraffic;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setIngoingTraffic(Long ingoingTraffic) {
+<b class="fc">&nbsp;        this.ingoingTraffic = ingoingTraffic;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Long getOutgoingTraffic() {
+<b class="fc">&nbsp;        return outgoingTraffic;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setOutgoingTraffic(Long outgoingTraffic) {
+<b class="fc">&nbsp;        this.outgoingTraffic = outgoingTraffic;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Iso getIso() {
+<b class="fc">&nbsp;        return iso;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setIso(Iso iso) {
+<b class="fc">&nbsp;        this.iso = iso;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Map&lt;String, String&gt; getLabels() {
+<b class="fc">&nbsp;        return labels;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setLabels(Map&lt;String, String&gt; labels) {
+<b class="fc">&nbsp;        this.labels = labels;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public List&lt;Object&gt; getLoadBalancers() {
+<b class="fc">&nbsp;        return loadBalancers;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setLoadBalancers(List&lt;Object&gt; loadBalancers) {
+<b class="fc">&nbsp;        this.loadBalancers = loadBalancers;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Boolean isLocked() {
+<b class="fc">&nbsp;        return locked;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setLocked(Boolean locked) {
+<b class="fc">&nbsp;        this.locked = locked;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getName() {
+<b class="fc">&nbsp;        return name;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setName(String name) {
+<b class="fc">&nbsp;        this.name = name;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public PlacementGroup getPlacementGroup() {
+<b class="fc">&nbsp;        return placementGroup;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setPlacementGroup(PlacementGroup placementGroup) {
+<b class="fc">&nbsp;        this.placementGroup = placementGroup;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Long getPrimaryDiskSize() {
+<b class="fc">&nbsp;        return primaryDiskSize;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setPrimaryDiskSize(Long primaryDiskSize) {
+<b class="fc">&nbsp;        this.primaryDiskSize = primaryDiskSize;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public List&lt;Object&gt; getPrivateNet() {
+<b class="fc">&nbsp;        return privateNet;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setPrivateNet(List&lt;Object&gt; privateNet) {
+<b class="fc">&nbsp;        this.privateNet = privateNet;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Protection getProtection() {
+<b class="fc">&nbsp;        return protection;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setProtection(Protection protection) {
+<b class="fc">&nbsp;        this.protection = protection;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Object getPublicNet() {
+<b class="fc">&nbsp;        return publicNet;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setPublicNet(Object publicNet) {
+<b class="fc">&nbsp;        this.publicNet = publicNet;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Boolean isRescueEnabled() {
+<b class="fc">&nbsp;        return rescueEnabled;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setRescueEnabled(Boolean rescueEnabled) {
+<b class="fc">&nbsp;        this.rescueEnabled = rescueEnabled;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public ServerType getServerType() {
+<b class="fc">&nbsp;        return serverType;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setServerType(ServerType serverType) {
+<b class="fc">&nbsp;        this.serverType = serverType;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getStatus() {
+<b class="fc">&nbsp;        return status;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setStatus(String status) {
+<b class="fc">&nbsp;        this.status = status;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public List&lt;Integer&gt; getVolumes() {
+<b class="fc">&nbsp;        return volumes;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setVolumes(List&lt;Integer&gt; volumes) {
+<b class="fc">&nbsp;        this.volumes = volumes;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public String toString() {
+<b class="fc">&nbsp;        return &quot;ServerDTO{&quot; +</b>
+&nbsp;                &quot;id=&quot; + id +
+&nbsp;                &quot;, backupWindow=&#39;&quot; + backupWindow + &#39;\&#39;&#39; +
+&nbsp;                &quot;, created=&#39;&quot; + created + &#39;\&#39;&#39; +
+&nbsp;                &quot;, datacenter=&quot; + datacenter +
+&nbsp;                &quot;, image=&quot; + image +
+&nbsp;                &quot;, includedTraffic=&quot; + includedTraffic +
+&nbsp;                &quot;, ingoingTraffic=&quot; + ingoingTraffic +
+&nbsp;                &quot;, outgoingTraffic=&quot; + outgoingTraffic +
+&nbsp;                &quot;, iso=&quot; + iso +
+&nbsp;                &quot;, labels=&quot; + labels +
+&nbsp;                &quot;, loadBalancers=&quot; + loadBalancers +
+&nbsp;                &quot;, locked=&quot; + locked +
+&nbsp;                &quot;, name=&#39;&quot; + name + &#39;\&#39;&#39; +
+&nbsp;                &quot;, placementGroup=&quot; + placementGroup +
+&nbsp;                &quot;, primaryDiskSize=&quot; + primaryDiskSize +
+&nbsp;                &quot;, privateNet=&quot; + privateNet +
+&nbsp;                &quot;, protection=&quot; + protection +
+&nbsp;                &quot;, publicNet=&quot; + publicNet +
+&nbsp;                &quot;, rescueEnabled=&quot; + rescueEnabled +
+&nbsp;                &quot;, serverType=&quot; + serverType +
+&nbsp;                &quot;, status=&#39;&quot; + status + &#39;\&#39;&#39; +
+&nbsp;                &quot;, volumes=&quot; + volumes +
+&nbsp;                &#39;}&#39;;
+&nbsp;    }
+&nbsp;
+<b class="fc">&nbsp;    public static class Builder {</b>
+&nbsp;        private Integer id;
+&nbsp;        private String backupWindow;
+&nbsp;        private String created;
+&nbsp;        private Datacenter datacenter;
+&nbsp;        private Image image;
+&nbsp;        private Long includedTraffic;
+&nbsp;        private Long ingoingTraffic;
+&nbsp;        private Long outgoingTraffic;
+&nbsp;        private Iso iso;
+&nbsp;        private Map&lt;String, String&gt; labels;
+&nbsp;        private List&lt;Object&gt; loadBalancers;
+&nbsp;        private Boolean locked;
+&nbsp;        private String name;
+&nbsp;        private PlacementGroup placementGroup;
+&nbsp;        private Long primaryDiskSize;
+&nbsp;        private List&lt;Object&gt; privateNet;
+&nbsp;        private Protection protection;
+&nbsp;        private Object publicNet;
+&nbsp;        private Boolean rescueEnabled;
+&nbsp;        private ServerType serverType;
+&nbsp;        private String status;
+&nbsp;        private List&lt;Integer&gt; volumes;
+&nbsp;
+&nbsp;        public static Builder newBuilder() {
+<b class="fc">&nbsp;            return new Builder();</b>
 &nbsp;        }
-<b class="fc">&nbsp;        return instance;</b>
-&nbsp;    }
 &nbsp;
-&nbsp;    public ServerChangeListener getServerChangeListener() {
-<b class="fc">&nbsp;        return serverChangeListener;</b>
+&nbsp;        public Builder id(Integer id) {
+<b class="fc">&nbsp;            this.id = id;</b>
+<b class="fc">&nbsp;            return this;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public Builder backupWindow(String backupWindow) {
+<b class="fc">&nbsp;            this.backupWindow = backupWindow;</b>
+<b class="fc">&nbsp;            return this;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public Builder created(String created) {
+<b class="fc">&nbsp;            this.created = created;</b>
+<b class="fc">&nbsp;            return this;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public Builder datacenter(Datacenter datacenter) {
+<b class="fc">&nbsp;            this.datacenter = datacenter;</b>
+<b class="fc">&nbsp;            return this;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public Builder image(Image image) {
+<b class="fc">&nbsp;            this.image = image;</b>
+<b class="fc">&nbsp;            return this;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public Builder includedTraffic(Long includedTraffic) {
+<b class="fc">&nbsp;            this.includedTraffic = includedTraffic;</b>
+<b class="fc">&nbsp;            return this;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public Builder ingoingTraffic(Long ingoingTraffic) {
+<b class="fc">&nbsp;            this.ingoingTraffic = ingoingTraffic;</b>
+<b class="fc">&nbsp;            return this;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public Builder outgoingTraffic(Long outgoingTraffic) {
+<b class="fc">&nbsp;            this.outgoingTraffic = outgoingTraffic;</b>
+<b class="fc">&nbsp;            return this;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public Builder iso(Iso iso) {
+<b class="fc">&nbsp;            this.iso = iso;</b>
+<b class="fc">&nbsp;            return this;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public Builder labels(Map&lt;String, String&gt; labels) {
+<b class="fc">&nbsp;            this.labels = labels;</b>
+<b class="fc">&nbsp;            return this;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public Builder loadBalancers(List&lt;Object&gt; loadBalancers) {
+<b class="fc">&nbsp;            this.loadBalancers = loadBalancers;</b>
+<b class="fc">&nbsp;            return this;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public Builder locked(Boolean locked) {
+<b class="fc">&nbsp;            this.locked = locked;</b>
+<b class="fc">&nbsp;            return this;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public Builder name(String name) {
+<b class="fc">&nbsp;            this.name = name;</b>
+<b class="fc">&nbsp;            return this;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public Builder placementGroup(PlacementGroup placementGroup) {
+<b class="fc">&nbsp;            this.placementGroup = placementGroup;</b>
+<b class="fc">&nbsp;            return this;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public Builder primaryDiskSize(Long primaryDiskSize) {
+<b class="fc">&nbsp;            this.primaryDiskSize = primaryDiskSize;</b>
+<b class="fc">&nbsp;            return this;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public Builder privateNet(List&lt;Object&gt; privateNet) {
+<b class="fc">&nbsp;            this.privateNet = privateNet;</b>
+<b class="fc">&nbsp;            return this;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public Builder protection(Protection protection) {
+<b class="fc">&nbsp;            this.protection = protection;</b>
+<b class="fc">&nbsp;            return this;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public Builder publicNet(Object publicNet) {
+<b class="fc">&nbsp;            this.publicNet = publicNet;</b>
+<b class="fc">&nbsp;            return this;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public Builder rescueEnabled(Boolean rescueEnabled) {
+<b class="fc">&nbsp;            this.rescueEnabled = rescueEnabled;</b>
+<b class="fc">&nbsp;            return this;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public Builder serverType(ServerType serverType) {
+<b class="fc">&nbsp;            this.serverType = serverType;</b>
+<b class="fc">&nbsp;            return this;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public Builder status(String status) {
+<b class="fc">&nbsp;            this.status = status;</b>
+<b class="fc">&nbsp;            return this;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public Builder volumes(List&lt;Integer&gt; volumes) {
+<b class="fc">&nbsp;            this.volumes = volumes;</b>
+<b class="fc">&nbsp;            return this;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        public ServerDTO build() {
+<b class="fc">&nbsp;            return new ServerDTO(id, backupWindow, created, datacenter, image, includedTraffic, ingoingTraffic, outgoingTraffic, iso, labels, loadBalancers, locked, name, placementGroup, primaryDiskSize, privateNet, protection, publicNet, rescueEnabled, serverType, status, volumes);</b>
+&nbsp;        }
 &nbsp;    }
 &nbsp;}
 </code>
@@ -133,7 +548,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2024-10-25 20:19</div>
+    <div style="float:right;">generated on 2024-10-26 16:29</div>
 </div>
 </body>
 </html>
