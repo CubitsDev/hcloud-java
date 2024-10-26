@@ -6,6 +6,10 @@ import dev.tomr.hcloud.HetznerCloud;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * Internal helper to handle the converting of a returned HTTP response's body, to an Object, with Jackson ObjectMapper
+ * @param <T>
+ */
 public class JacksonBodyHandler<T> implements HttpResponse.BodyHandler<T> {
 
     private final Class<T> clazz;

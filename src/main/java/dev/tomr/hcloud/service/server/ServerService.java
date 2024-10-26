@@ -28,11 +28,20 @@ public class ServerService {
     private Server updatedServer;
     private CompletableFuture<Void> updatedServerFuture;
 
+    /**
+     * Creates a new {@code ServerService} instance
+     */
     public ServerService() {
         client = HetznerCloudHttpClient.getInstance();
         serviceManager = HetznerCloud.getServiceManager();
     }
 
+    /**
+     * Send a PUT regarding an update to a Server's name or label. This is used internally, and to prevent desync shouldn't be called directly.
+     * @param field Name of the field that's changed (name/labels)
+     * @param value New value for that field
+     * @param server Related {@code Server} Object
+     */
     public void serverNameOrLabelUpdate(String field, Object value, Server server) {
         updatedFields.put(field, value);
         updatedServer = server;
@@ -60,6 +69,9 @@ public class ServerService {
         }
     }
 
+    /**
+     * Cancel any requests waiting to be sent to the Hetzner API. Running this could cause a desync between the local and remote objects, so will force a GET for the targeted Server
+     */
     public void cancelServerNameOrLabelUpdate() {
         logger.info("Cancelling server name/label update");
         updatedFields.clear();

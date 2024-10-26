@@ -35,10 +35,38 @@ public class Server implements Serializable {
     private String status;
     private List<Integer> volumes;
 
+    /**
+     * Creates a new {@code Server} to be monitored by the library. If you want to create a new Hetzner Server, don't call this, as it won't 'create' a new instance remotely.
+     */
     public Server() {
         setupPropertyChangeListener();
     }
 
+    /**
+     * Creates a new {@code Server} to be monitored by the library. If you want to create a new Hetzner Server, don't call this, as it won't 'create' a new instance remotely.
+     * @param id Server ID
+     * @param backupWindow Server backupWindow
+     * @param created Server created date
+     * @param datacenter Associated Datacenter
+     * @param image Associated Image
+     * @param includedTraffic Included Traffic
+     * @param ingoingTraffic Ingoing Traffic
+     * @param outgoingTraffic Outgoing Traffic
+     * @param iso Associated ISO
+     * @param labels Associated Labels
+     * @param loadBalancers Associated Load Balancers
+     * @param locked Whether the server is locked or not
+     * @param name Name of the Server
+     * @param placementGroup Server's placement group
+     * @param primaryDiskSize Primary Disks' size
+     * @param privateNet Attached Private Networks
+     * @param protection Associated Protection
+     * @param publicNet AAttached Public Networks
+     * @param rescueEnabled Whether rescue is enabled or not
+     * @param serverType Associated Server Type
+     * @param status Status of the Server
+     * @param volumes Attached Volumes
+     */
     public Server(Integer id, String backupWindow, String created, Datacenter datacenter, Image image, Long includedTraffic, Long ingoingTraffic, Long outgoingTraffic, Iso iso, Map<String, String> labels, List<Object> loadBalancers, boolean locked, String name, PlacementGroup placementGroup, Long primaryDiskSize, List<Object> privateNet, Protection protection, Object publicNet, boolean rescueEnabled, ServerType serverType, String status, List<Integer> volumes) {
         this.id = id;
         this.backupWindow = backupWindow;
@@ -72,19 +100,35 @@ public class Server implements Serializable {
 
     // These are the current setters that will send an API request (PUT /servers) when actions begin to be added, they will also likely be triggered by setters
 
+    /**
+     * Get current labels associated with this {@code Server}
+     * @return {@code Map<String, String>} of the labels
+     */
     public Map<String, String> getLabels() {
         return labels;
     }
 
+    /**
+     * Set's the labels to the specified param. Triggers a remote update with Hetzner.
+     * @param labels New set of labels for this server
+     */
     public void setLabels(Map<String, String> labels) {
         propertyChangeSupport.firePropertyChange("labels", this.labels, labels);
         this.labels = labels;
     }
 
+    /**
+     * Get the current name of this Server
+     * @return {@code String} with the server name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Set's the name to the specified param. Triggers a remote update with Hetzner.
+     * @param name New name for this server
+     */
     public void setName(String name) {
         propertyChangeSupport.firePropertyChange("name", this.name, name);
         this.name = name;

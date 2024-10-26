@@ -10,6 +10,10 @@ public class ListenerManager {
         instance = this;
     }
 
+    /**
+     * Get's the ListenerManager Instance, creates one if it doesn't exist
+     * @return {@code ListenerManager} in use
+     */
     public static ListenerManager getInstance() {
         if (instance == null) {
             instance = new ListenerManager();
@@ -17,6 +21,10 @@ public class ListenerManager {
         return instance;
     }
 
+    /**
+     * Gets the associated Server Change Listener
+     * @return {@code ServerChangeListener} the ListenerManager's ServerChangeListener
+     */
     public ServerChangeListener getServerChangeListener() {
         return serverChangeListener;
     }
