@@ -1,6 +1,7 @@
 package dev.tomr.hcloud.http.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import dev.tomr.hcloud.http.HetznerJsonObject;
 import dev.tomr.hcloud.resources.common.*;
@@ -9,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ServerDTO extends HetznerJsonObject {
     private Integer id;
     @JsonProperty("backup_window")
@@ -26,7 +28,7 @@ public class ServerDTO extends HetznerJsonObject {
     private Map<String, String> labels;
     @JsonProperty("load_balancers")
     private List<Object> loadBalancers; // need to figure this out
-    private boolean locked;
+    private Boolean locked;
     private String name;
     @JsonProperty("placement_group")
     private PlacementGroup placementGroup;
@@ -39,13 +41,16 @@ public class ServerDTO extends HetznerJsonObject {
     @JsonProperty("public_net")
     private Object publicNet;
     @JsonProperty("rescue_enabled")
-    private boolean rescueEnabled;
+    private Boolean rescueEnabled;
     @JsonProperty("server_type")
     private ServerType serverType;
     private String status;
     private List<Integer> volumes;
 
-    public ServerDTO(Integer id, String backupWindow, String created, Datacenter datacenter, Image image, Long includedTraffic, Long ingoingTraffic, Long outgoingTraffic, Iso iso, Map<String, String> labels, List<Object> loadBalancers, boolean locked, String name, PlacementGroup placementGroup, Long primaryDiskSize, List<Object> privateNet, Protection protection, Object publicNet, boolean rescueEnabled, ServerType serverType, String status, List<Integer> volumes) {
+    public ServerDTO() {
+    }
+
+    public ServerDTO(Integer id, String backupWindow, String created, Datacenter datacenter, Image image, Long includedTraffic, Long ingoingTraffic, Long outgoingTraffic, Iso iso, Map<String, String> labels, List<Object> loadBalancers, Boolean locked, String name, PlacementGroup placementGroup, Long primaryDiskSize, List<Object> privateNet, Protection protection, Object publicNet, Boolean rescueEnabled, ServerType serverType, String status, List<Integer> volumes) {
         this.id = id;
         this.backupWindow = backupWindow;
         this.created = created;
@@ -158,11 +163,11 @@ public class ServerDTO extends HetznerJsonObject {
         this.loadBalancers = loadBalancers;
     }
 
-    public boolean isLocked() {
+    public Boolean isLocked() {
         return locked;
     }
 
-    public void setLocked(boolean locked) {
+    public void setLocked(Boolean locked) {
         this.locked = locked;
     }
 
@@ -214,11 +219,11 @@ public class ServerDTO extends HetznerJsonObject {
         this.publicNet = publicNet;
     }
 
-    public boolean isRescueEnabled() {
+    public Boolean isRescueEnabled() {
         return rescueEnabled;
     }
 
-    public void setRescueEnabled(boolean rescueEnabled) {
+    public void setRescueEnabled(Boolean rescueEnabled) {
         this.rescueEnabled = rescueEnabled;
     }
 
@@ -286,14 +291,14 @@ public class ServerDTO extends HetznerJsonObject {
         private Iso iso;
         private Map<String, String> labels;
         private List<Object> loadBalancers;
-        private boolean locked;
+        private Boolean locked;
         private String name;
         private PlacementGroup placementGroup;
         private Long primaryDiskSize;
         private List<Object> privateNet;
         private Protection protection;
         private Object publicNet;
-        private boolean rescueEnabled;
+        private Boolean rescueEnabled;
         private ServerType serverType;
         private String status;
         private List<Integer> volumes;
@@ -357,7 +362,7 @@ public class ServerDTO extends HetznerJsonObject {
             return this;
         }
 
-        public Builder locked(boolean locked) {
+        public Builder locked(Boolean locked) {
             this.locked = locked;
             return this;
         }
@@ -392,7 +397,7 @@ public class ServerDTO extends HetznerJsonObject {
             return this;
         }
 
-        public Builder rescueEnabled(boolean rescueEnabled) {
+        public Builder rescueEnabled(Boolean rescueEnabled) {
             this.rescueEnabled = rescueEnabled;
             return this;
         }

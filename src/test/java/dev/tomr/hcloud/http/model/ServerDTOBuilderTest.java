@@ -108,7 +108,7 @@ public class ServerDTOBuilderTest {
 
 
         assertNull(serverDTO.getServerType());
-        assertFalse(serverDTO.isRescueEnabled());
+        assertNull(serverDTO.isRescueEnabled());
         assertNull(serverDTO.getCreated());
         assertNull(serverDTO.getBackupWindow());
         assertNull(serverDTO.getStatus());
@@ -119,7 +119,7 @@ public class ServerDTOBuilderTest {
         assertNull(serverDTO.getIngoingTraffic());
         assertNull(serverDTO.getDatacenter());
         assertNull(serverDTO.getLoadBalancers());
-        assertFalse(serverDTO.isLocked());
+        assertNull(serverDTO.isLocked());
         assertNull(serverDTO.getName());
         assertNull(serverDTO.getOutgoingTraffic());
         assertNull(serverDTO.getPlacementGroup());

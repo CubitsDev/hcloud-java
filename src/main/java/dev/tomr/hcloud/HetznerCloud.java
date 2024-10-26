@@ -2,13 +2,18 @@ package dev.tomr.hcloud;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.tomr.hcloud.listener.ListenerManager;
+import dev.tomr.hcloud.service.ServiceManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.List;
+
 
 public class HetznerCloud {
     protected static final Logger logger = LogManager.getLogger();
 
     private static final ListenerManager listenerManager = ListenerManager.getInstance();
+    private static final ServiceManager serviceManager = ServiceManager.getInstance();
     private static final ObjectMapper objectMapper = new ObjectMapper();
     private static String HETZNER_CLOUD_HOST = "https://api.hetzner.cloud/v1/";
 
@@ -49,4 +54,11 @@ public class HetznerCloud {
         return listenerManager;
     }
 
+    public static ServiceManager getServiceManager() {
+        return serviceManager;
+    }
+
+    public List<String> getHttpDetails() {
+        return List.of(host, apiKey);
+    }
 }

@@ -2,6 +2,8 @@ package dev.tomr.hcloud.listener;
 
 import dev.tomr.hcloud.HetznerCloud;
 import dev.tomr.hcloud.resources.server.Server;
+import dev.tomr.hcloud.service.ServiceManager;
+import dev.tomr.hcloud.service.server.ServerService;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
@@ -22,10 +24,14 @@ public class ServerChangeListenerTest {
             ServerChangeListener scl = new ServerChangeListener();
             ServerChangeListener serverChangeListener = spy(scl);
             ListenerManager listenerManager = mock(ListenerManager.class);
+            ServiceManager serviceManager = mock(ServiceManager.class);
+            ServerService serverService = mock(ServerService.class);
             ArgumentCaptor<PropertyChangeEvent> captor = ArgumentCaptor.forClass(PropertyChangeEvent.class);
 
+            hetznerCloud.when(HetznerCloud::getServiceManager).thenReturn(serviceManager);
             hetznerCloud.when(HetznerCloud::getListenerManager).thenReturn(listenerManager);
             when(listenerManager.getServerChangeListener()).thenReturn(serverChangeListener);
+            when(serviceManager.getServerService()).thenReturn(serverService);
 
             Server server = new Server();
             server.setName("test");

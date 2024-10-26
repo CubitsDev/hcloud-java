@@ -44,6 +44,22 @@ public class HttpClientComponentTest {
     }
 
     @Test
+    @DisplayName("HTTP Client can make a successful PUT request with Body and map to response class")
+    void testHttpClientAndMappingWithBodyPUT() throws IOException, InterruptedException {
+        HetznerCloudHttpClient client = new HetznerCloudHttpClient();
+
+        TestModel testModel = new TestModel();
+        testModel.setUserId(2);
+        testModel.setTitle("some title");
+        testModel.setBody("some body");
+
+        TestModel response = client.sendHttpRequest(TestModel.class, "https://jsonplaceholder.typicode.com/posts/1", RequestVerb.PUT, "", new ObjectMapper().writeValueAsString(testModel));
+        assertEquals(testModel.getBody(), response.getBody());
+        assertEquals(testModel.getTitle(), response.getTitle());
+        assertEquals(testModel.getUserId(), response.getUserId());
+    }
+
+    @Test
     @DisplayName("HTTP client throws an IOException when non JSON is returned")
     void testHttpClientThrowsRuntimeException() throws IOException, InterruptedException {
         HetznerCloudHttpClient client = new HetznerCloudHttpClient();

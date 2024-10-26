@@ -9,8 +9,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ServerDTOTest {
 
@@ -19,6 +18,11 @@ public class ServerDTOTest {
     @BeforeEach
     void setup() {
         serverDTO = ServerDTO.Builder.newBuilder().build();
+    }
+
+    @Test
+    void defaultConstructor() {
+        assertInstanceOf(ServerDTO.class, new ServerDTO());
     }
 
     @Test
@@ -202,14 +206,14 @@ public class ServerDTOTest {
                 "iso=null, " +
                 "labels=null, " +
                 "loadBalancers=null, " +
-                "locked=false, " +
+                "locked=null, " +
                 "name='null', " +
                 "placementGroup=null, " +
                 "primaryDiskSize=null, " +
                 "privateNet=null, " +
                 "protection=null, " +
                 "publicNet=null, " +
-                "rescueEnabled=false, " +
+                "rescueEnabled=null, " +
                 "serverType=null, " +
                 "status='null', " +
                 "volumes=null}", serverDTO.toString());

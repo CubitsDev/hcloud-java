@@ -1,11 +1,13 @@
 package dev.tomr.hcloud;
 
 import dev.tomr.hcloud.listener.ListenerManager;
+import dev.tomr.hcloud.service.ServiceManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -58,6 +60,21 @@ class HetznerCloudTest {
     void callingGetListenerManagerReturnsTheListenerManager() {
         ListenerManager listenerManager = ListenerManager.getInstance();
         assertEquals(listenerManager, HetznerCloud.getListenerManager());
+    }
+
+    @Test
+    @DisplayName("Calling getServiceManager returns the service manager")
+    void callingGetServiceManagerReturnsTheServiceManager() {
+        ServiceManager serviceManager = ServiceManager.getInstance();
+        assertEquals(serviceManager, HetznerCloud.getServiceManager());
+    }
+
+    @Test
+    @DisplayName("Calling getHttpDetails will return the host and apikey in a list")
+    void callingGetHttpDetailsWillReturnTheHostAndApikeyInAList() {
+        HetznerCloud instance = HetznerCloud.getInstance();
+        instance.setApiKey("apiKey");
+        assertEquals(List.of("https://api.hetzner.cloud/v1/", "apiKey"), instance.getHttpDetails());
     }
 
 }

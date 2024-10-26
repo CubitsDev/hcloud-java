@@ -1,5 +1,6 @@
 package dev.tomr.hcloud.listener;
 
+import dev.tomr.hcloud.HetznerCloud;
 import dev.tomr.hcloud.resources.server.Server;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,5 +17,6 @@ public class ServerChangeListener implements PropertyChangeListener {
         //todo handle incoming changes to send API request
         logger.info("Server changed: " + evt.getPropertyName());
         logger.info("Server: " + evt.getOldValue() + " -> " + evt.getNewValue());
+        HetznerCloud.getServiceManager().getServerService().serverNameOrLabelUpdate(evt.getPropertyName(), evt.getNewValue(), server);
     }
 }

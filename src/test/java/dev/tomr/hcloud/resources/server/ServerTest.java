@@ -4,6 +4,8 @@ import dev.tomr.hcloud.HetznerCloud;
 import dev.tomr.hcloud.listener.ListenerManager;
 import dev.tomr.hcloud.listener.ServerChangeListener;
 import dev.tomr.hcloud.resources.common.*;
+import dev.tomr.hcloud.service.ServiceManager;
+import dev.tomr.hcloud.service.server.ServerService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -110,10 +112,16 @@ class ServerTest {
     @Test
     @DisplayName("calling setLabels updates labels")
     void callingSetLabelsUpdatesLabels() {
-        Server server = new Server();
-        server.setLabels(Map.of("label", "value"));
-        assertEquals("value", server.getLabels().get("label"));
-        assertEquals(Map.of("label", "value"), server.getLabels());
+        try (MockedStatic<HetznerCloud> hetznerCloudMockedStatic = mockStatic(HetznerCloud.class);
+            MockedStatic<ListenerManager> listenerManagerMockedStatic = mockStatic(ListenerManager.class)) {
+            ListenerManager listenerManager = mock(ListenerManager.class);
+            hetznerCloudMockedStatic.when(HetznerCloud::getListenerManager).thenReturn(listenerManager);
+
+            Server server = new Server();
+            server.setLabels(Map.of("label", "value"));
+            assertEquals("value", server.getLabels().get("label"));
+            assertEquals(Map.of("label", "value"), server.getLabels());
+        }
     }
 
     @Test
@@ -123,10 +131,14 @@ class ServerTest {
             ServerChangeListener scl = new ServerChangeListener();
             ServerChangeListener serverChangeListener = spy(scl);
             ListenerManager listenerManager = mock(ListenerManager.class);
+            ServiceManager serviceManager = mock(ServiceManager.class);
+            ServerService serverService = mock(ServerService.class);
             ArgumentCaptor<PropertyChangeEvent> captor = ArgumentCaptor.forClass(PropertyChangeEvent.class);
 
+            hetznerCloud.when(HetznerCloud::getServiceManager).thenReturn(serviceManager);
             hetznerCloud.when(HetznerCloud::getListenerManager).thenReturn(listenerManager);
             when(listenerManager.getServerChangeListener()).thenReturn(serverChangeListener);
+            when(serviceManager.getServerService()).thenReturn(serverService);
 
             Server server = new Server();
             server.setLabels(Map.of("label", "value"));
@@ -141,9 +153,14 @@ class ServerTest {
     @Test
     @DisplayName("calling setName updates the name")
     void callingSetNameUpdatesTheName() {
-        Server server = new Server();
-        server.setName("name");
-        assertEquals("name", server.getName());
+        try (MockedStatic<HetznerCloud> hetznerCloudMockedStatic = mockStatic(HetznerCloud.class);
+             MockedStatic<ListenerManager> listenerManagerMockedStatic = mockStatic(ListenerManager.class)) {
+            ListenerManager listenerManager = mock(ListenerManager.class);
+            hetznerCloudMockedStatic.when(HetznerCloud::getListenerManager).thenReturn(listenerManager);
+            Server server = new Server();
+            server.setName("name");
+            assertEquals("name", server.getName());
+        }
     }
 
     @Test
@@ -153,10 +170,14 @@ class ServerTest {
             ServerChangeListener scl = new ServerChangeListener();
             ServerChangeListener serverChangeListener = spy(scl);
             ListenerManager listenerManager = mock(ListenerManager.class);
+            ServiceManager serviceManager = mock(ServiceManager.class);
+            ServerService serverService = mock(ServerService.class);
             ArgumentCaptor<PropertyChangeEvent> captor = ArgumentCaptor.forClass(PropertyChangeEvent.class);
 
+            hetznerCloud.when(HetznerCloud::getServiceManager).thenReturn(serviceManager);
             hetznerCloud.when(HetznerCloud::getListenerManager).thenReturn(listenerManager);
             when(listenerManager.getServerChangeListener()).thenReturn(serverChangeListener);
+            when(serviceManager.getServerService()).thenReturn(serverService);
 
             Server server = new Server();
             server.setName("test");

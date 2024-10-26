@@ -46,6 +46,7 @@ public class HetznerCloudHttpClient {
         builder = switch (requestVerb) {
             case GET -> builder.GET();
             case POST -> builder.POST(HttpRequest.BodyPublishers.ofString(body));
+            case PUT -> builder.PUT(HttpRequest.BodyPublishers.ofString(body));
         };
         return builder.build();
     }
