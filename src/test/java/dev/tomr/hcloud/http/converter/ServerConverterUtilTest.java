@@ -227,4 +227,10 @@ public class ServerConverterUtilTest {
         assertNull(serverDTO.getLabels());
         assertNull(serverDTO.getName());
     }
+
+    @Test
+    @DisplayName("ServerConverterUtil constructor")
+    void test() {
+        assertInstanceOf(ServerConverterUtil.class, new ServerConverterUtil());
+    }
 }
