@@ -99,7 +99,7 @@ public class ServerService {
                 } else {
                     throw new RuntimeException("No updated values??");
                 }
-            } catch (InterruptedException | IOException e) {
+            } catch (InterruptedException | IOException | IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
         }, serviceManager.getExecutor());

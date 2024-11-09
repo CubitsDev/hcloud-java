@@ -12,6 +12,8 @@ import dev.tomr.hcloud.http.exception.HetznerApiException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.IOException;
 
@@ -32,7 +34,7 @@ public class HttpClientComponentTest {
 
     @Test
     @DisplayName("HTTP Client can make a successful GET request and map to class")
-    public void testHttpClientAndMapping() throws IOException, InterruptedException {
+    public void testHttpClientAndMapping() throws IOException, InterruptedException, IllegalAccessException {
         wireMockExtension.stubFor(get("/test").willReturn(ok(objectMapper.writeValueAsString(new TestModel(1, 1, "sunt aut facere repellat provident occaecati excepturi optio reprehenderit", "quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto")))));
 
         HetznerCloudHttpClient client = new HetznerCloudHttpClient();
@@ -47,7 +49,7 @@ public class HttpClientComponentTest {
 
     @Test
     @DisplayName("HTTP Client can make a successful POST request with Body and map to response class")
-    void testHttpClientAndMappingWithBody() throws IOException, InterruptedException {
+    void testHttpClientAndMappingWithBody() throws IOException, InterruptedException, IllegalAccessException {
         wireMockExtension.stubFor(post("/test").willReturn(ok(objectMapper.writeValueAsString(new TestModel(2, 1, "some title", "some body")))));
         HetznerCloudHttpClient client = new HetznerCloudHttpClient();
 
@@ -64,7 +66,7 @@ public class HttpClientComponentTest {
 
     @Test
     @DisplayName("HTTP Client can make a successful PUT request with Body and map to response class")
-    void testHttpClientAndMappingWithBodyPUT() throws IOException, InterruptedException {
+    void testHttpClientAndMappingWithBodyPUT() throws IOException, InterruptedException, IllegalAccessException {
         wireMockExtension.stubFor(put("/test").willReturn(ok(objectMapper.writeValueAsString(new TestModel(2, 1, "some title", "some body")))));
         HetznerCloudHttpClient client = new HetznerCloudHttpClient();
 
@@ -110,5 +112,34 @@ public class HttpClientComponentTest {
         HetznerCloudHttpClient client = new HetznerCloudHttpClient();
 
         assertThrows(IOException.class, () -> client.sendHttpRequest(TestModel.class, HOST + "badResponseWithXml", RequestVerb.GET, ""));
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {201, 200})
+    @DisplayName("HTTP Client can make a successful GET request with Body and map to response class with status")
+    void testHttpClientAndMappingWithBodyGetStatus(int statusCode) throws IOException, InterruptedException, IllegalAccessException {
+        wireMockExtension.stubFor(get("/test").willReturn(aResponse().withStatus(statusCode).withBody(objectMapper.writeValueAsString(new TestModel(2, 1, "some title", "some body")))));
+        HetznerCloudHttpClient client = new HetznerCloudHttpClient();
+
+        TestModel testModel = new TestModel();
+        testModel.setUserId(2);
+        testModel.setTitle("some title");
+        testModel.setBody("some body");
+
+        TestModel response = client.sendHttpRequest(TestModel.class, HOST + "test", RequestVerb.GET, "");
+        assertEquals(testModel.getBody(), response.getBody());
+        assertEquals(testModel.getTitle(), response.getTitle());
+        assertEquals(testModel.getUserId(), response.getUserId());
+    }
+
+    @Test
+    @DisplayName("HTTP Client handles 204 no content correctly")
+    void httpClientHandles204NoContent() throws IOException, InterruptedException, IllegalAccessException {
+        // this test is needed because 204 does not support handling a body
+        // todo refactor how we handle HTTP Status codes we **know** will never supply a body, i.e. 204 - this implementation leaves a lot to be desired
+        wireMockExtension.stubFor(get("/test").willReturn(aResponse().withStatus(204)));
+        HetznerCloudHttpClient client = new HetznerCloudHttpClient();
+
+        assertDoesNotThrow(() -> client.sendHttpRequest(TestModel.class, HOST + "test", RequestVerb.GET, ""));
     }
 }

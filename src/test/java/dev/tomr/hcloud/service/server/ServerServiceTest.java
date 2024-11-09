@@ -110,7 +110,7 @@ class ServerServiceTest {
             serverService.serverNameOrLabelUpdate("name", "name", server);
 
             verify(hetznerCloudHttpClient, timeout(2000).times(1)).sendHttpRequest(eq(ServerDTO.class), eq("http://host/server/1"), any(RequestVerb.class), eq("key1234"),  eq("{\"name\":\"name\"}"));
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException | InterruptedException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
     }
@@ -165,7 +165,7 @@ class ServerServiceTest {
             serverService.serverNameOrLabelUpdate("labels", Map.of("label", "value"), server);
 
             verify(hetznerCloudHttpClient, timeout(2000).times(1)).sendHttpRequest(eq(ServerDTO.class), eq("http://host/server/1"), any(RequestVerb.class), eq("key1234"),  eq("{\"labels\":{\"label\":\"value\"}}"));
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException | InterruptedException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
     }
@@ -221,7 +221,7 @@ class ServerServiceTest {
             serverService.serverNameOrLabelUpdate("labels", Map.of("l", "v"), server);
 
             verify(hetznerCloudHttpClient, timeout(2000).times(1)).sendHttpRequest(eq(ServerDTO.class), eq("http://host/server/1"), any(RequestVerb.class), eq("key1234"),  eq("{\"labels\":{\"label\":\"value\"},\"name\":\"name\"}"));
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException | InterruptedException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
     }
@@ -279,7 +279,7 @@ class ServerServiceTest {
 
             verify(hetznerCloudHttpClient, timeout(2000).times(0)).sendHttpRequest(eq(ServerDTO.class), eq("http://host/server/1"), any(RequestVerb.class), eq("key1234"),  eq("{\"labels\":{\"label\":\"value\"},\"name\":\"name\"}"));
             verify(serviceManager, timeout(2000).times(1)).closeExecutor();
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException | InterruptedException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
     }
@@ -337,7 +337,7 @@ class ServerServiceTest {
 
             verify(hetznerCloudHttpClient, timeout(2000).times(0)).sendHttpRequest(any(), any(), any(), any(), any());
             verify(serviceManager, timeout(2000).times(1)).closeExecutor();
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException | InterruptedException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
     }
