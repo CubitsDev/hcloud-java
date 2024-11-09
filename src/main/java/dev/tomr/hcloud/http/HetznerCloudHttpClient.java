@@ -3,6 +3,8 @@ package dev.tomr.hcloud.http;
 import dev.tomr.hcloud.HetznerCloud;
 import dev.tomr.hcloud.http.exception.HetznerApiException;
 import dev.tomr.hcloud.http.model.HetznerErrorResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URI;
@@ -15,6 +17,7 @@ import static java.lang.String.format;
 
 public class HetznerCloudHttpClient {
 
+    private static final Logger log = LoggerFactory.getLogger(HetznerCloudHttpClient.class);
     private static HetznerCloudHttpClient instance;
 
     private final HttpClient httpClient;
@@ -49,7 +52,7 @@ public class HetznerCloudHttpClient {
      * @throws IOException Exception passed from HTTP client
      * @throws InterruptedException Exception passed from HTTP client
      */
-    public <T extends HetznerJsonObject> T sendHttpRequest(Class<T> clazz, String endpoint, RequestVerb requestVerb, String apiKey) throws IOException, InterruptedException {
+    public <T extends HetznerJsonObject> T sendHttpRequest(Class<T> clazz, String endpoint, RequestVerb requestVerb, String apiKey) throws IOException, InterruptedException, IllegalAccessException {
         return sendHttpRequest(clazz, endpoint, requestVerb, apiKey, null);
     }
 
@@ -65,16 +68,20 @@ public class HetznerCloudHttpClient {
      * @throws IOException Exception passed from HTTP client
      * @throws InterruptedException Exception passed from HTTP client
      */
-    public <T extends HetznerJsonObject> T sendHttpRequest(Class<T> clazz, String endpoint, RequestVerb requestVerb, String apiKey, String body) throws IOException, InterruptedException {
+    public <T extends HetznerJsonObject> T sendHttpRequest(Class<T> clazz, String endpoint, RequestVerb requestVerb, String apiKey, String body) throws IOException, InterruptedException, IllegalAccessException {
         HttpRequest request = createHttpRequest(endpoint, requestVerb, apiKey, body);
-        HttpResponse<T> response = httpClient.send(request, new JacksonBodyHandler<>(clazz));
+        HttpResponse<HetznerResult<T, HetznerErrorResponse>> response = httpClient.send(request, new JacksonBodyHandler<>(clazz, HetznerErrorResponse.class));
 
-        switch (response.statusCode()) {
-            case 200, 201, 204 -> {
-                return (T) response.body();
+        switch (Integer.parseInt(Integer.toString(response.statusCode()).substring(0, 1))) {
+            case 2 -> {
+                if (response.statusCode() == 204) {
+                    log.info("Response was 204, continuing...");
+                    return null;
+                }
+                return response.body().getSuccessObject();
             }
             default -> {
-                HetznerErrorResponse errorResponse = (HetznerErrorResponse) response.body();
+                HetznerErrorResponse errorResponse = response.body().getFailureObject();
                 throw new HetznerApiException(errorResponse);
             }
         }
