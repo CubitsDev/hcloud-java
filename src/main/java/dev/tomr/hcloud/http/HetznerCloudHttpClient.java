@@ -1,11 +1,14 @@
 package dev.tomr.hcloud.http;
 
 import dev.tomr.hcloud.HetznerCloud;
+import dev.tomr.hcloud.http.exception.HetznerApiException;
+import dev.tomr.hcloud.http.model.HetznerErrorResponse;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.time.Duration;
 
 import static java.lang.String.format;
@@ -64,7 +67,17 @@ public class HetznerCloudHttpClient {
      */
     public <T extends HetznerJsonObject> T sendHttpRequest(Class<T> clazz, String endpoint, RequestVerb requestVerb, String apiKey, String body) throws IOException, InterruptedException {
         HttpRequest request = createHttpRequest(endpoint, requestVerb, apiKey, body);
-        return (T) httpClient.send(request, new JacksonBodyHandler<>(clazz)).body();
+        HttpResponse<T> response = httpClient.send(request, new JacksonBodyHandler<>(clazz));
+
+        switch (response.statusCode()) {
+            case 200, 201, 204 -> {
+                return (T) response.body();
+            }
+            default -> {
+                HetznerErrorResponse errorResponse = (HetznerErrorResponse) response.body();
+                throw new HetznerApiException(errorResponse);
+            }
+        }
     }
 
     private HttpRequest createHttpRequest(String uri, RequestVerb requestVerb, String apiKey, String body) {

@@ -1,12 +1,14 @@
 package dev.tomr.hcloud.component.http;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.common.Notifier;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import dev.tomr.hcloud.http.HetznerCloudHttpClient;
 import dev.tomr.hcloud.http.RequestVerb;
+import dev.tomr.hcloud.http.exception.HetznerApiException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -79,11 +81,34 @@ public class HttpClientComponentTest {
 
     @Test
     @DisplayName("HTTP client throws an IOException when non JSON is returned")
-    void testHttpClientThrowsRuntimeException() throws IOException, InterruptedException {
+    void testHttpClientThrowsRuntimeException() {
         wireMockExtension.stubFor(get("/broken").willReturn(okXml("<xml></xml>")));
         HetznerCloudHttpClient client = new HetznerCloudHttpClient();
 
         assertThrows(IOException.class, () -> client.sendHttpRequest(TestModel.class, HOST + "broken", RequestVerb.GET, ""));
 
+    }
+
+    @Test
+    @DisplayName("HTTP Client handles a bad response gracefully")
+    void testHttpClientThrowsBadResponseGracefully() {
+        wireMockExtension.stubFor(get("/badResponse").willReturn(aResponse().withStatus(401).withBody("{  \"error\": {    \"code\": \"uniqueness_error\",    \"message\": \"SSH key with the same fingerprint already exists\",    \"details\": {      \"fields\": [        {          \"name\": \"public_key\"        }      ]    }  }}")));
+        HetznerCloudHttpClient client = new HetznerCloudHttpClient();
+
+        HetznerApiException hetznerApiException = assertThrows(
+                HetznerApiException.class,
+                () -> client.sendHttpRequest(TestModel.class, HOST + "badResponse", RequestVerb.GET, "")
+        );
+
+        assertEquals("HetznerErrorResponse [code=uniqueness_error, message=SSH key with the same fingerprint already exists]", hetznerApiException.getMessage());
+    }
+
+    @Test
+    @DisplayName("HTTP client throws an IOException when non JSON is returned on a bad response")
+    void testHttpClientThrowsHetznerApiExceptionWhenBadJsonResponse() {
+        wireMockExtension.stubFor(get("/badResponseWithXml").willReturn(aResponse().withStatus(401).withBody("<xml></xml>")));
+        HetznerCloudHttpClient client = new HetznerCloudHttpClient();
+
+        assertThrows(IOException.class, () -> client.sendHttpRequest(TestModel.class, HOST + "badResponseWithXml", RequestVerb.GET, ""));
     }
 }
