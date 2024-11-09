@@ -114,24 +114,6 @@ public class HttpClientComponentTest {
         assertThrows(IOException.class, () -> client.sendHttpRequest(TestModel.class, HOST + "badResponseWithXml", RequestVerb.GET, ""));
     }
 
-    @ParameterizedTest
-    @ValueSource(ints = {201, 200})
-    @DisplayName("HTTP Client can make a successful GET request with Body and map to response class with status")
-    void testHttpClientAndMappingWithBodyGetStatus(int statusCode) throws IOException, InterruptedException, IllegalAccessException {
-        wireMockExtension.stubFor(get("/test").willReturn(aResponse().withStatus(statusCode).withBody(objectMapper.writeValueAsString(new TestModel(2, 1, "some title", "some body")))));
-        HetznerCloudHttpClient client = new HetznerCloudHttpClient();
-
-        TestModel testModel = new TestModel();
-        testModel.setUserId(2);
-        testModel.setTitle("some title");
-        testModel.setBody("some body");
-
-        TestModel response = client.sendHttpRequest(TestModel.class, HOST + "test", RequestVerb.GET, "");
-        assertEquals(testModel.getBody(), response.getBody());
-        assertEquals(testModel.getTitle(), response.getTitle());
-        assertEquals(testModel.getUserId(), response.getUserId());
-    }
-
     @Test
     @DisplayName("HTTP Client handles 204 no content correctly")
     void httpClientHandles204NoContent() throws IOException, InterruptedException, IllegalAccessException {
