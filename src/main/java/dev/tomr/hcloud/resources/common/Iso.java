@@ -20,6 +20,9 @@ public class Iso{
         this.type = type;
     }
 
+    public Iso() {
+    }
+
     public String getArchitecture() {
         return architecture;
     }

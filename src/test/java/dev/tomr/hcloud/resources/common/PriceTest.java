@@ -11,12 +11,12 @@ class PriceTest {
 
     @BeforeEach
     void setUp() {
-        price = new Price(0, null, null, null, null);
+        price = new Price(00L, null, null, null, null);
     }
 
     @Test
     void setIncludedTraffic() {
-        price.setIncludedTraffic(1);
+        price.setIncludedTraffic(1L);
         assertEquals(1, price.getIncludedTraffic());
     }
 

@@ -13,8 +13,8 @@ public class ServiceManager {
     private ExecutorService executor;
 
     private ServiceManager() {
-        this.serverService = new ServerService();
         instance = this;
+        this.serverService = new ServerService(this);
     }
 
     /**

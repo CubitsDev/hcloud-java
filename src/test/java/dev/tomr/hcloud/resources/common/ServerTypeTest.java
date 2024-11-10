@@ -88,7 +88,7 @@ class ServerTypeTest {
 
     @Test
     void setPrices() {
-        List<Price> prices = List.of(new Price(0, "", new PriceDetails("", ""), new PriceDetails("", ""), new PriceDetails("", "")));
+        List<Price> prices = List.of(new Price(0L, "", new PriceDetails("", ""), new PriceDetails("", ""), new PriceDetails("", "")));
         serverType.setPrices(prices);
         assertEquals(prices, serverType.getPrices());
     }

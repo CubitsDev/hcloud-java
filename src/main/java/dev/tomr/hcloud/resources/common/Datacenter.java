@@ -18,6 +18,9 @@ public class Datacenter{
         this.serverTypes = serverTypes;
     }
 
+    public Datacenter() {
+    }
+
     public String getDescription() {
         return description;
     }

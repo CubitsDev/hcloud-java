@@ -9,6 +9,8 @@ public class PriceDetails {
         this.net = net;
     }
 
+    public PriceDetails() {}
+
     public String getGross() {
         return gross;
     }

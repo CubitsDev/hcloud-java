@@ -53,6 +53,9 @@ public class Image{
         this.type = type;
     }
 
+    public Image() {
+    }
+
     public String getArchitecture() {
         return architecture;
     }

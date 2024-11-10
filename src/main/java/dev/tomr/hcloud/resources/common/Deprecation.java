@@ -14,6 +14,9 @@ public class Deprecation{
         this.unavailableAfter = unavailableAfter;
     }
 
+    public Deprecation() {
+    }
+
     public Date getAnnounced() {
         return announced;
     }

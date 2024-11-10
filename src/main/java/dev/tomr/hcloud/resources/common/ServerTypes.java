@@ -16,6 +16,8 @@ public class ServerTypes{
         this.supported = supported;
     }
 
+    public ServerTypes() {}
+
     public List<Integer> getAvailable() {
         return available;
     }

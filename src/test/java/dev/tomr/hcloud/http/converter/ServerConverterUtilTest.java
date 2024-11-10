@@ -27,7 +27,7 @@ public class ServerConverterUtilTest {
             null,
             2048,
             "",
-            List.of(new Price(0, "london", new PriceDetails("", ""), new PriceDetails("", ""), new PriceDetails("", ""))),
+            List.of(new Price(0L, "london", new PriceDetails("", ""), new PriceDetails("", ""), new PriceDetails("", ""))),
             ""
     );
     private Iso ISO = new Iso("", Map.of(), "", 1, "", "");

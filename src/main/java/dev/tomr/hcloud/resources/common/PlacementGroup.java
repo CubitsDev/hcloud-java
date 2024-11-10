@@ -21,6 +21,9 @@ public class PlacementGroup {
         this.type = type;
     }
 
+    public PlacementGroup() {
+    }
+
     public Date getCreated() {
         return created;
     }

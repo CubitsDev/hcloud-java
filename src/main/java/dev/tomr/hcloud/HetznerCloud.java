@@ -2,6 +2,7 @@ package dev.tomr.hcloud;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.tomr.hcloud.listener.ListenerManager;
+import dev.tomr.hcloud.resources.server.Server;
 import dev.tomr.hcloud.service.ServiceManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,10 +15,10 @@ import java.util.List;
 public class HetznerCloud {
     protected static final Logger logger = LogManager.getLogger();
 
-    private static final ListenerManager listenerManager = ListenerManager.getInstance();
-    private static final ServiceManager serviceManager = ServiceManager.getInstance();
+    private static ListenerManager listenerManager = ListenerManager.getInstance();
+    private static ServiceManager serviceManager = ServiceManager.getInstance();
     private static final ObjectMapper objectMapper = new ObjectMapper();
-    private static String HETZNER_CLOUD_HOST = "https://api.hetzner.cloud/v1/";
+    private static final String HETZNER_CLOUD_HOST = "https://api.hetzner.cloud/v1/";
 
     private static HetznerCloud instance;
 
@@ -32,6 +33,7 @@ public class HetznerCloud {
         this.apiKey = apiKey;
         this.host = HETZNER_CLOUD_HOST;
         instance = this;
+        ServiceManager.getInstance().getServerService().forceRefreshServersCache();
     }
 
     /**
@@ -43,6 +45,7 @@ public class HetznerCloud {
         this.apiKey = apiKey;
         this.host = host;
         instance = this;
+        ServiceManager.getInstance().getServerService().forceRefreshServersCache();
     }
 
     /**
@@ -95,5 +98,22 @@ public class HetznerCloud {
      */
     public List<String> getHttpDetails() {
         return List.of(host, apiKey);
+    }
+
+    /**
+     * Whether we have an API Key supplied
+     * @return true if one is present, false if not
+     */
+    public boolean hasApiKey() {
+        return apiKey != null && !apiKey.isEmpty();
+    }
+
+    /**
+     * Get a Hetzner Server Instance from the local cache
+     * @param id ID of the server
+     * @return A server object from the local cache
+     */
+    public Server getServer(Integer id) {
+        return serviceManager.getServerService().getServer(id);
     }
 }

@@ -38,6 +38,8 @@ public class ServerType {
         this.storageType = storageType;
     }
 
+    public ServerType() {}
+
     public String getArchitecture() {
         return architecture;
     }
