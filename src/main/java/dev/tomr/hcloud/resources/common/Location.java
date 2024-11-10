@@ -24,6 +24,9 @@ public class Location{
         this.networkZone = networkZone;
     }
 
+    public Location() {
+    }
+
     public String getCity() {
         return city;
     }

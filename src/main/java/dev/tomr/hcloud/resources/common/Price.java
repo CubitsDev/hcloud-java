@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Price{
     @JsonProperty("included_traffic")
-    private Integer includedTraffic;
+    private Long includedTraffic;
     private String location;
     @JsonProperty("price_hourly")
     private PriceDetails priceHourly;
@@ -13,7 +13,7 @@ public class Price{
     @JsonProperty("price_per_tb_traffic")
     private PriceDetails pricePerTbTraffic;
 
-    public Price(Integer includedTraffic, String location, PriceDetails priceHourly, PriceDetails priceMonthly, PriceDetails pricePerTbTraffic) {
+    public Price(Long includedTraffic, String location, PriceDetails priceHourly, PriceDetails priceMonthly, PriceDetails pricePerTbTraffic) {
         this.includedTraffic = includedTraffic;
         this.location = location;
         this.priceHourly = priceHourly;
@@ -21,11 +21,13 @@ public class Price{
         this.pricePerTbTraffic = pricePerTbTraffic;
     }
 
-    public Integer getIncludedTraffic() {
+    public Price() {}
+
+    public Long getIncludedTraffic() {
         return includedTraffic;
     }
 
-    public void setIncludedTraffic(Integer includedTraffic) {
+    public void setIncludedTraffic(Long includedTraffic) {
         this.includedTraffic = includedTraffic;
     }
 

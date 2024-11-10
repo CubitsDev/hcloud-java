@@ -174,7 +174,7 @@ public class ServerDTOTest {
                 null,
                 2048,
                 "",
-                List.of(new Price(0, "london", new PriceDetails("", ""), new PriceDetails("", ""), new PriceDetails("", ""))),
+                List.of(new Price(0L, "london", new PriceDetails("", ""), new PriceDetails("", ""), new PriceDetails("", ""))),
                 ""
         );
         serverDTO.setServerType(serverType);

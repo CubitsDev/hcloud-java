@@ -9,13 +9,15 @@ public class CreatedFrom{
         this.name = name;
     }
 
+    public CreatedFrom() {
+    }
+
     public int getId() {
         return id;
     }
 
-    public CreatedFrom setId(int id) {
+    public void setId(int id) {
         this.id = id;
-        return this;
     }
 
     public String getName() {

@@ -12,6 +12,8 @@ public class Protection{
         this.rebuild = rebuild;
     }
 
+    public Protection() {}
+
     public boolean isDelete() {
         return delete;
     }

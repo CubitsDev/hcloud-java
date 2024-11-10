@@ -4,36 +4,55 @@ import dev.tomr.hcloud.HetznerCloud;
 import dev.tomr.hcloud.http.HetznerCloudHttpClient;
 import dev.tomr.hcloud.http.converter.ServerConverterUtil;
 import dev.tomr.hcloud.http.model.ServerDTO;
+import dev.tomr.hcloud.http.model.ServerDTOList;
 import dev.tomr.hcloud.resources.server.Server;
 import dev.tomr.hcloud.service.ServiceManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.time.Instant;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static dev.tomr.hcloud.http.RequestVerb.GET;
 import static dev.tomr.hcloud.http.RequestVerb.PUT;
 
 public class ServerService {
     protected static final Logger logger = LogManager.getLogger();
 
-    private final HetznerCloudHttpClient client;
+    private final HetznerCloudHttpClient client = HetznerCloudHttpClient.getInstance();
     private final ServiceManager serviceManager;
 
     private final ConcurrentHashMap<String, Object> updatedFields = new ConcurrentHashMap<>();
     private Server updatedServer;
     private CompletableFuture<Void> updatedServerFuture;
 
+    private Map<Date, Server> remoteServers = new HashMap<>();
+
     /**
      * Creates a new {@code ServerService} instance
      */
     public ServerService() {
-        client = HetznerCloudHttpClient.getInstance();
-        serviceManager = HetznerCloud.getServiceManager();
+        this.serviceManager = HetznerCloud.getServiceManager();
+    }
+
+    public ServerService(ServiceManager serviceManager) {
+        this.serviceManager = serviceManager;
+    }
+
+    public void forceRefreshServersCache() {
+        if (HetznerCloud.getInstance().hasApiKey()) {
+            updateAllRemoteServers();
+        } else {
+            logger.warn("No API Key supplied, not refreshing servers. Consider refreshing again, when you have a key!");
+        }
     }
 
     /**
@@ -77,6 +96,34 @@ public class ServerService {
         updatedFields.clear();
     }
 
+    private void updateAllRemoteServers() {
+        Map<Date, Server> newServerMap = new HashMap<>();
+        List<String> hostAndKey = HetznerCloud.getInstance().getHttpDetails();
+        String httpUrl = String.format("%sservers", hostAndKey.get(0));
+        ServerDTOList serverDTOList = null;
+        try {
+            serverDTOList = client.sendHttpRequest(ServerDTOList.class, httpUrl, GET, hostAndKey.get(1));
+        } catch (IOException | InterruptedException | IllegalAccessException e) {
+            logger.error("Failed to refresh all remote servers!");
+            throw new RuntimeException(e);
+        }
+        serverDTOList.getServers().forEach(serverDTO -> {
+            newServerMap.put(Date.from(Instant.now()), ServerConverterUtil.transformServerDTOToServer(serverDTO));
+            logger.info(serverDTO.getId());
+        });
+        remoteServers = newServerMap;
+    }
+
+    public Server getServer(Integer id) {
+        for (var entry : remoteServers.entrySet()) {
+            if (entry.getValue().getId().equals(id)) {
+                return entry.getValue();
+            }
+        }
+        logger.warn("Server with id {} not found", id);
+        return null;
+    }
+
     private CompletableFuture<Void> scheduleHttpRequest(String host, String apiKey) {
         return CompletableFuture.runAsync(() -> {
             try {
@@ -94,7 +141,7 @@ public class ServerService {
                     removeUnchangedFields(serverDTO);
                     info = ref.get();
                     logger.info(info);
-                    String endpoint = host + "server/" + updatedServer.getId();
+                    String endpoint = host + "servers/" + updatedServer.getId();
                     client.sendHttpRequest(ServerDTO.class, endpoint, PUT, apiKey, HetznerCloud.getObjectMapper().writeValueAsString(serverDTO));
                 } else {
                     throw new RuntimeException("No updated values??");
