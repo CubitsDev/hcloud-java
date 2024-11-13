@@ -12,6 +12,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -35,6 +36,7 @@ public class ServerService {
     private CompletableFuture<Void> updatedServerFuture;
 
     private Map<Date, Server> remoteServers = new HashMap<>();
+    private Date lastFullRefresh;
 
     /**
      * Creates a new {@code ServerService} instance
@@ -109,12 +111,13 @@ public class ServerService {
         }
         serverDTOList.getServers().forEach(serverDTO -> {
             newServerMap.put(Date.from(Instant.now()), ServerConverterUtil.transformServerDTOToServer(serverDTO));
-            logger.info(serverDTO.getId());
         });
         remoteServers = newServerMap;
+        lastFullRefresh = new Date();
     }
 
     public Server getServer(Integer id) {
+        verifyCacheUpToDate();
         for (var entry : remoteServers.entrySet()) {
             if (entry.getValue().getId().equals(id)) {
                 return entry.getValue();
@@ -158,6 +161,12 @@ public class ServerService {
         }
         if (!updatedFields.containsKey("name")) {
             serverDTO.setName(null);
+        }
+    }
+
+    private void verifyCacheUpToDate() {
+        if (lastFullRefresh == null || lastFullRefresh.before(Date.from(Instant.now().minus(10, ChronoUnit.MINUTES)))) {
+            forceRefreshServersCache();
         }
     }
 }

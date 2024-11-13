@@ -15,8 +15,8 @@ import java.util.List;
 public class HetznerCloud {
     protected static final Logger logger = LogManager.getLogger();
 
-    private static ListenerManager listenerManager = ListenerManager.getInstance();
-    private static ServiceManager serviceManager = ServiceManager.getInstance();
+    private static final ListenerManager listenerManager = ListenerManager.getInstance();
+    private static final ServiceManager serviceManager = ServiceManager.getInstance();
     private static final ObjectMapper objectMapper = new ObjectMapper();
     private static final String HETZNER_CLOUD_HOST = "https://api.hetzner.cloud/v1/";
 
@@ -33,7 +33,6 @@ public class HetznerCloud {
         this.apiKey = apiKey;
         this.host = HETZNER_CLOUD_HOST;
         instance = this;
-        ServiceManager.getInstance().getServerService().forceRefreshServersCache();
     }
 
     /**
@@ -45,7 +44,6 @@ public class HetznerCloud {
         this.apiKey = apiKey;
         this.host = host;
         instance = this;
-        ServiceManager.getInstance().getServerService().forceRefreshServersCache();
     }
 
     /**
