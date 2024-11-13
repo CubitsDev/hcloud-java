@@ -4,6 +4,7 @@ import dev.tomr.hcloud.HetznerCloud;
 import dev.tomr.hcloud.http.HetznerCloudHttpClient;
 import dev.tomr.hcloud.http.RequestVerb;
 import dev.tomr.hcloud.http.model.ServerDTO;
+import dev.tomr.hcloud.http.model.ServerDTOList;
 import dev.tomr.hcloud.listener.ListenerManager;
 import dev.tomr.hcloud.resources.common.*;
 import dev.tomr.hcloud.resources.server.Server;
@@ -109,7 +110,7 @@ class ServerServiceTest {
 
             serverService.serverNameOrLabelUpdate("name", "name", server);
 
-            verify(hetznerCloudHttpClient, timeout(2000).times(1)).sendHttpRequest(eq(ServerDTO.class), eq("http://host/server/1"), any(RequestVerb.class), eq("key1234"),  eq("{\"name\":\"name\"}"));
+            verify(hetznerCloudHttpClient, timeout(2000).times(1)).sendHttpRequest(eq(ServerDTO.class), eq("http://host/servers/1"), any(RequestVerb.class), eq("key1234"),  eq("{\"name\":\"name\"}"));
         } catch (IOException | InterruptedException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
@@ -164,7 +165,7 @@ class ServerServiceTest {
 
             serverService.serverNameOrLabelUpdate("labels", Map.of("label", "value"), server);
 
-            verify(hetznerCloudHttpClient, timeout(2000).times(1)).sendHttpRequest(eq(ServerDTO.class), eq("http://host/server/1"), any(RequestVerb.class), eq("key1234"),  eq("{\"labels\":{\"label\":\"value\"}}"));
+            verify(hetznerCloudHttpClient, timeout(2000).times(1)).sendHttpRequest(eq(ServerDTO.class), eq("http://host/servers/1"), any(RequestVerb.class), eq("key1234"),  eq("{\"labels\":{\"label\":\"value\"}}"));
         } catch (IOException | InterruptedException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
@@ -220,7 +221,7 @@ class ServerServiceTest {
             serverService.serverNameOrLabelUpdate("name", "name", server);
             serverService.serverNameOrLabelUpdate("labels", Map.of("l", "v"), server);
 
-            verify(hetznerCloudHttpClient, timeout(2000).times(1)).sendHttpRequest(eq(ServerDTO.class), eq("http://host/server/1"), any(RequestVerb.class), eq("key1234"),  eq("{\"labels\":{\"label\":\"value\"},\"name\":\"name\"}"));
+            verify(hetznerCloudHttpClient, timeout(2000).times(1)).sendHttpRequest(eq(ServerDTO.class), eq("http://host/servers/1"), any(RequestVerb.class), eq("key1234"),  eq("{\"labels\":{\"label\":\"value\"},\"name\":\"name\"}"));
         } catch (IOException | InterruptedException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
@@ -277,7 +278,7 @@ class ServerServiceTest {
 
             when(hetznerCloudHttpClient.sendHttpRequest(any(), any(), any(), any(), any())).thenThrow(IOException.class);
 
-            verify(hetznerCloudHttpClient, timeout(2000).times(0)).sendHttpRequest(eq(ServerDTO.class), eq("http://host/server/1"), any(RequestVerb.class), eq("key1234"),  eq("{\"labels\":{\"label\":\"value\"},\"name\":\"name\"}"));
+            verify(hetznerCloudHttpClient, timeout(2000).times(0)).sendHttpRequest(eq(ServerDTO.class), eq("http://host/servers/1"), any(RequestVerb.class), eq("key1234"),  eq("{\"labels\":{\"label\":\"value\"},\"name\":\"name\"}"));
             verify(serviceManager, timeout(2000).times(1)).closeExecutor();
         } catch (IOException | InterruptedException | IllegalAccessException e) {
             throw new RuntimeException(e);
@@ -339,6 +340,36 @@ class ServerServiceTest {
             verify(serviceManager, timeout(2000).times(1)).closeExecutor();
         } catch (IOException | InterruptedException | IllegalAccessException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    @DisplayName("getServer returns a server from the cache")
+    void getServerReturnsAServerFromTheCache() throws IOException, InterruptedException, IllegalAccessException {
+        HetznerCloud hetznerCloud = mock(HetznerCloud.class);
+        HetznerCloudHttpClient hetznerCloudHttpClient = mock(HetznerCloudHttpClient.class);
+        ListenerManager listenerManager = mock(ListenerManager.class);
+
+        try (MockedStatic<HetznerCloud> hetznerCloudMockedStatic = mockStatic(HetznerCloud.class);
+             MockedStatic<HetznerCloudHttpClient> hetznerCloudHttpClientMockedStatic = mockStatic(HetznerCloudHttpClient.class)) {
+            ServerDTOList serverDTOList = new ServerDTOList();
+            ServerDTO serverDTO = new ServerDTO();
+            serverDTO.setName("name");
+            serverDTO.setId(1);
+            serverDTOList.setServers(List.of(serverDTO));
+
+            hetznerCloudHttpClientMockedStatic.when(HetznerCloudHttpClient::getInstance).thenReturn(hetznerCloudHttpClient);
+            hetznerCloudMockedStatic.when(HetznerCloud::getListenerManager).thenReturn(listenerManager);
+            hetznerCloudMockedStatic.when(HetznerCloud::getInstance).thenReturn(hetznerCloud);
+            when(hetznerCloud.getHttpDetails()).thenReturn(List.of("http://host/", "key1234"));
+            when(hetznerCloud.hasApiKey()).thenReturn(true);
+            when(hetznerCloudHttpClient.sendHttpRequest(any(), anyString(), any(RequestVerb.class), anyString())).thenReturn(serverDTOList);
+
+            ServerService serverService = new ServerService();
+
+            Server server = serverService.getServer(1);
+
+            assertEquals(serverDTO.getName(), server.getName());
         }
     }
 }

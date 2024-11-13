@@ -22,7 +22,7 @@ public class Server implements Serializable {
     private Iso iso;
     private Map<String, String> labels;
     private List<Object> loadBalancers; // need to figure this out
-    private boolean locked;
+    private Boolean locked;
     private String name;
     private PlacementGroup placementGroup;
     private Long primaryDiskSize;
@@ -30,7 +30,7 @@ public class Server implements Serializable {
     private List<Object> privateNet;
     private Protection protection;
     private Object publicNet;
-    private boolean rescueEnabled;
+    private Boolean rescueEnabled;
     private ServerType serverType;
     private String status;
     private List<Integer> volumes;
@@ -67,7 +67,7 @@ public class Server implements Serializable {
      * @param status Status of the Server
      * @param volumes Attached Volumes
      */
-    public Server(Integer id, String backupWindow, String created, Datacenter datacenter, Image image, Long includedTraffic, Long ingoingTraffic, Long outgoingTraffic, Iso iso, Map<String, String> labels, List<Object> loadBalancers, boolean locked, String name, PlacementGroup placementGroup, Long primaryDiskSize, List<Object> privateNet, Protection protection, Object publicNet, boolean rescueEnabled, ServerType serverType, String status, List<Integer> volumes) {
+    public Server(Integer id, String backupWindow, String created, Datacenter datacenter, Image image, Long includedTraffic, Long ingoingTraffic, Long outgoingTraffic, Iso iso, Map<String, String> labels, List<Object> loadBalancers, Boolean locked, String name, PlacementGroup placementGroup, Long primaryDiskSize, List<Object> privateNet, Protection protection, Object publicNet, Boolean rescueEnabled, ServerType serverType, String status, List<Integer> volumes) {
         this.id = id;
         this.backupWindow = backupWindow;
         this.created = created;
@@ -177,7 +177,7 @@ public class Server implements Serializable {
         return loadBalancers;
     }
 
-    public boolean isLocked() {
+    public Boolean isLocked() {
         return locked;
     }
 
@@ -201,7 +201,7 @@ public class Server implements Serializable {
         return publicNet;
     }
 
-    public boolean isRescueEnabled() {
+    public Boolean isRescueEnabled() {
         return rescueEnabled;
     }
 
