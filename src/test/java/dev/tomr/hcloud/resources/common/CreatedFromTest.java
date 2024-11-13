@@ -3,7 +3,7 @@ package dev.tomr.hcloud.resources.common;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CreatedFromTest {
 
@@ -24,5 +24,11 @@ public class CreatedFromTest {
     void setName() {
         createdFrom.setName("test");
         assertEquals("test", createdFrom.getName());
+    }
+
+    @Test
+    void defaultConstructor() {
+        createdFrom = new CreatedFrom();
+        assertNotNull(createdFrom);
     }
 }

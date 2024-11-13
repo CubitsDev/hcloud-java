@@ -33,4 +33,10 @@ class ServerTypesTest {
         serverTypes.setSupported(List.of(1, 2));
         assertEquals(List.of(1, 2), serverTypes.getSupported());
     }
+
+    @Test
+    void defaultConstructor() {
+        ServerTypes serverTypes = new ServerTypes();
+        assertNotNull(serverTypes);
+    }
 }

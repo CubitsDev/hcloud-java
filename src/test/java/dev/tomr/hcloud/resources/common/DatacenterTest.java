@@ -3,6 +3,7 @@ package dev.tomr.hcloud.resources.common;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -46,5 +47,11 @@ class DatacenterTest {
         ServerTypes serverTypes = new ServerTypes(List.of(), List.of(), List.of());
         datacenter.setServerTypes(serverTypes);
         assertEquals(serverTypes, datacenter.getServerTypes());
+    }
+
+    @Test
+    void defaultConstructor() {
+        Datacenter datacenter = new Datacenter();
+        assertNotNull(datacenter);
     }
 }

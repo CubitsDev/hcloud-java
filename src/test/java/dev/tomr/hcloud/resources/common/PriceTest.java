@@ -46,4 +46,10 @@ class PriceTest {
         price.setPricePerTbTraffic(priceDetails);
         assertEquals(priceDetails, price.getPricePerTbTraffic());
     }
+
+    @Test
+    void defaultConstructor() {
+        Price price = new Price();
+        assertNotNull(price);
+    }
 }

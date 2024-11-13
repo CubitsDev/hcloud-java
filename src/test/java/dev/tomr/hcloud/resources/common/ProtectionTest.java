@@ -25,4 +25,10 @@ class ProtectionTest {
         protection.setRebuild(true);
         assertTrue(protection.isRebuild());
     }
+
+    @Test
+    void defaultConstructor() {
+        Protection protection = new Protection();
+        assertNotNull(protection);
+    }
 }

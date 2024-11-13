@@ -98,4 +98,10 @@ class ServerTypeTest {
         serverType.setStorageType("storage");
         assertEquals("storage", serverType.getStorageType());
     }
+
+    @Test
+    void defaultConstructor() {
+        ServerType serverType = new ServerType();
+        assertNotNull(serverType);
+    }
 }

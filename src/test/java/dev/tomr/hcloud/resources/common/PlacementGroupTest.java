@@ -54,4 +54,10 @@ class PlacementGroupTest {
         placementGroup.setType("test");
         assertEquals("test", placementGroup.getType());
     }
+
+    @Test
+    void defaultConstructor() {
+        PlacementGroup placementGroup = new PlacementGroup();
+        assertNotNull(placementGroup);
+    }
 }

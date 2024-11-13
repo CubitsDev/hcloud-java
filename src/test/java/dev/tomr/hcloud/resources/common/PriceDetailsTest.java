@@ -25,4 +25,10 @@ class PriceDetailsTest {
         priceDetails.setNet("net");
         assertEquals("net", priceDetails.getNet());
     }
+
+    @Test
+    void defaultConstructor() {
+        PriceDetails priceDetails = new PriceDetails();
+        assertNotNull(priceDetails);
+    }
 }

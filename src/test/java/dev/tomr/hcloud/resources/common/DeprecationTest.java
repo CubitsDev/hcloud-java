@@ -30,4 +30,10 @@ class DeprecationTest {
         deprecation.setUnavailableAfter(date);
         assertEquals(date, deprecation.getUnavailableAfter());
     }
+
+    @Test
+    void defaultConstructor() {
+        Deprecation deprecation = new Deprecation();
+        assertNotNull(deprecation);
+    }
 }
