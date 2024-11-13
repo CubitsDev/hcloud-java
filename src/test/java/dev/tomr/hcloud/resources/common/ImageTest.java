@@ -129,4 +129,10 @@ class ImageTest {
         image.setType("type");
         assertEquals("type", image.getType());
     }
+
+    @Test
+    void defaultConstructor() {
+        Image image = new Image();
+        assertNotNull(image);
+    }
 }

@@ -54,4 +54,10 @@ class IsoTest {
         iso.setType("test");
         assertEquals("test", iso.getType());
     }
+
+    @Test
+    void defaultConstructor() {
+        Iso iso = new Iso();
+        assertNotNull(iso);
+    }
 }

@@ -61,4 +61,10 @@ class LocationTest {
         location.setNetworkZone("test");
         assertEquals("test", location.getNetworkZone());
     }
+
+    @Test
+    void defaultConstructor() {
+        Location location = new Location();
+        assertNotNull(location);
+    }
 }
