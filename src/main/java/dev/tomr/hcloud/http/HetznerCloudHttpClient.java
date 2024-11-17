@@ -88,8 +88,10 @@ public class HetznerCloudHttpClient {
     }
 
     private HttpRequest createHttpRequest(String uri, RequestVerb requestVerb, String apiKey, String body) {
+        HttpClient.Version version = HttpClient.Version.HTTP_1_1;
         HttpRequest.Builder builder = HttpRequest.newBuilder()
                 .uri(URI.create(uri))
+                .version(version)
                 .header("Authorization", format("Bearer %s", apiKey))
                 .header("Content-Type", "application/json");
         builder = switch (requestVerb) {
