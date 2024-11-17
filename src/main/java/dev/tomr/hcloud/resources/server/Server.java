@@ -94,7 +94,7 @@ public class Server implements Serializable {
     }
 
     private void setupPropertyChangeListener() {
-        propertyChangeSupport.addPropertyChangeListener(HetznerCloud.getListenerManager().getServerChangeListener());
+        propertyChangeSupport.addPropertyChangeListener(HetznerCloud.getInstance().getListenerManager().getServerChangeListener());
     }
 
 

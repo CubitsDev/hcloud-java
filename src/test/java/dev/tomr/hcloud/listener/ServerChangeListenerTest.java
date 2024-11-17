@@ -21,6 +21,7 @@ public class ServerChangeListenerTest {
     @Test
     void verifyServerChangeListenerCalledWhenSetterIsSet() {
         try (MockedStatic<HetznerCloud> hetznerCloud = mockStatic(HetznerCloud.class)) {
+            HetznerCloud hetznerCloudMock = mock(HetznerCloud.class);
             ServerChangeListener scl = new ServerChangeListener();
             ServerChangeListener serverChangeListener = spy(scl);
             ListenerManager listenerManager = mock(ListenerManager.class);
@@ -28,10 +29,11 @@ public class ServerChangeListenerTest {
             ServerService serverService = mock(ServerService.class);
             ArgumentCaptor<PropertyChangeEvent> captor = ArgumentCaptor.forClass(PropertyChangeEvent.class);
 
-            hetznerCloud.when(HetznerCloud::getServiceManager).thenReturn(serviceManager);
-            hetznerCloud.when(HetznerCloud::getListenerManager).thenReturn(listenerManager);
+            hetznerCloud.when(HetznerCloud::getInstance).thenReturn(hetznerCloudMock);
             when(listenerManager.getServerChangeListener()).thenReturn(serverChangeListener);
             when(serviceManager.getServerService()).thenReturn(serverService);
+            when(hetznerCloudMock.getListenerManager()).thenReturn(listenerManager);
+            when(hetznerCloudMock.getServiceManager()).thenReturn(serviceManager);
 
             Server server = new Server();
             server.setName("test");

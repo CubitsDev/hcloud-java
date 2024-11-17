@@ -42,7 +42,7 @@ public class ServerService {
      * Creates a new {@code ServerService} instance
      */
     public ServerService() {
-        this.serviceManager = HetznerCloud.getServiceManager();
+        this.serviceManager = HetznerCloud.getInstance().getServiceManager();
     }
 
     public ServerService(ServiceManager serviceManager) {
@@ -113,7 +113,7 @@ public class ServerService {
             newServerMap.put(Date.from(Instant.now()), ServerConverterUtil.transformServerDTOToServer(serverDTO));
         });
         remoteServers = newServerMap;
-        lastFullRefresh = new Date();
+        lastFullRefresh = Date.from(Instant.now());
     }
 
     public Server getServer(Integer id) {

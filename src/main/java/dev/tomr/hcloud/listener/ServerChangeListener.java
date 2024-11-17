@@ -21,6 +21,6 @@ public class ServerChangeListener implements PropertyChangeListener {
         Server server = (Server) evt.getSource();
         logger.info("Server changed: " + evt.getPropertyName());
         logger.info("Server: " + evt.getOldValue() + " -> " + evt.getNewValue());
-        HetznerCloud.getServiceManager().getServerService().serverNameOrLabelUpdate(evt.getPropertyName(), evt.getNewValue(), server);
+        HetznerCloud.getInstance().getServiceManager().getServerService().serverNameOrLabelUpdate(evt.getPropertyName(), evt.getNewValue(), server);
     }
 }
