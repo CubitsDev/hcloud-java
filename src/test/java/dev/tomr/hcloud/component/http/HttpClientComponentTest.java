@@ -1,11 +1,13 @@
 package dev.tomr.hcloud.component.http;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.github.tomakehurst.wiremock.common.Notifier;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
+import dev.tomr.hcloud.HetznerCloud;
 import dev.tomr.hcloud.http.HetznerCloudHttpClient;
 import dev.tomr.hcloud.http.RequestVerb;
 import dev.tomr.hcloud.http.exception.HetznerApiException;
@@ -14,12 +16,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.MockedStatic;
 
 import java.io.IOException;
+import java.util.List;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 public class HttpClientComponentTest {
 
@@ -116,7 +121,7 @@ public class HttpClientComponentTest {
 
     @Test
     @DisplayName("HTTP Client handles 204 no content correctly")
-    void httpClientHandles204NoContent() throws IOException, InterruptedException, IllegalAccessException {
+    void httpClientHandles204NoContent() {
         // this test is needed because 204 does not support handling a body
         // todo refactor how we handle HTTP Status codes we **know** will never supply a body, i.e. 204 - this implementation leaves a lot to be desired
         wireMockExtension.stubFor(get("/test").willReturn(aResponse().withStatus(204)));
