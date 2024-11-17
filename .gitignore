@@ -39,3 +39,4 @@ bin/
 .DS_Store
 
 .idea
+/src/test/java/dev/tomr/hcloud/component/TestApp.java

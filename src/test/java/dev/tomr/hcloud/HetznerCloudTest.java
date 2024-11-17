@@ -64,14 +64,14 @@ class HetznerCloudTest {
     @DisplayName("Calling getListenerManager returns the listener manager")
     void callingGetListenerManagerReturnsTheListenerManager() {
         ListenerManager listenerManager = ListenerManager.getInstance();
-        assertEquals(listenerManager, HetznerCloud.getListenerManager());
+        assertEquals(listenerManager, HetznerCloud.getInstance().getListenerManager());
     }
 
     @Test
     @DisplayName("Calling getServiceManager returns the service manager")
     void callingGetServiceManagerReturnsTheServiceManager() {
         ServiceManager serviceManager = ServiceManager.getInstance();
-        assertEquals(serviceManager, HetznerCloud.getServiceManager());
+        assertEquals(serviceManager, HetznerCloud.getInstance().getServiceManager());
     }
 
     @Test

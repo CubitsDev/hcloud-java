@@ -15,12 +15,13 @@ import java.util.List;
 public class HetznerCloud {
     protected static final Logger logger = LogManager.getLogger();
 
-    private static final ListenerManager listenerManager = ListenerManager.getInstance();
-    private static final ServiceManager serviceManager = ServiceManager.getInstance();
     private static final ObjectMapper objectMapper = new ObjectMapper();
     private static final String HETZNER_CLOUD_HOST = "https://api.hetzner.cloud/v1/";
 
     private static HetznerCloud instance;
+
+    private final ListenerManager listenerManager = ListenerManager.getInstance();
+    private final ServiceManager serviceManager = ServiceManager.getInstance();
 
     private String apiKey;
     private final String host;
@@ -78,7 +79,7 @@ public class HetznerCloud {
      * Get the internal {@code ListenerManager}. End users do not need to interact with the {@code ListenerManager}
      * @return The {@code ListenerManager} Instance
      */
-    public static ListenerManager getListenerManager() {
+    public ListenerManager getListenerManager() {
         return listenerManager;
     }
 
@@ -86,7 +87,7 @@ public class HetznerCloud {
      * Get the internal {@code ServiceManager}. End users do not need to interact with the {@code ServiceManager}
      * @return The {@code ServiceManager} Instance
      */
-    public static ServiceManager getServiceManager() {
+    public ServiceManager getServiceManager() {
         return serviceManager;
     }
 

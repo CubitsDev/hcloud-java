@@ -9,13 +9,17 @@ import dev.tomr.hcloud.listener.ListenerManager;
 import dev.tomr.hcloud.resources.common.*;
 import dev.tomr.hcloud.resources.server.Server;
 import dev.tomr.hcloud.service.ServiceManager;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.time.Clock;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
@@ -61,6 +65,23 @@ class ServerServiceTest {
             "",
             "");
 
+    private MockedStatic<Instant> instantMockedStatic;
+
+    private void mockInstant(long time) {
+        Instant instant = Instant.ofEpochSecond(time);
+        instantMockedStatic.when(Instant::now).thenReturn(instant);
+    }
+
+    @BeforeEach
+    void setUp() {
+        instantMockedStatic = mockStatic(Instant.class, Mockito.CALLS_REAL_METHODS);
+    }
+
+    @AfterEach
+    void after() {
+        instantMockedStatic.close();
+    }
+
     @Test
     @DisplayName("Task is scheduled when serverNameOrLabelUpdate called for first time with name supplied")
     void taskIsScheduledWhenServerNameOrLabelUpdateCalledForFirstTime() {
@@ -78,8 +99,9 @@ class ServerServiceTest {
             serviceManagerMockedStatic.when(ServiceManager::getInstance).thenReturn(serviceManager);
 
             hetznerCloudMockedStatic.when(HetznerCloud::getInstance).thenReturn(hetznerCloud);
-            hetznerCloudMockedStatic.when(HetznerCloud::getServiceManager).thenReturn(serviceManager);
-            hetznerCloudMockedStatic.when(HetznerCloud::getListenerManager).thenReturn(listenerManager);
+
+            when(hetznerCloud.getServiceManager()).thenReturn(serviceManager);
+            when(hetznerCloud.getListenerManager()).thenReturn(listenerManager);
 
             when(hetznerCloud.getHttpDetails()).thenReturn(List.of("http://host/", "key1234"));
 
@@ -133,8 +155,9 @@ class ServerServiceTest {
             serviceManagerMockedStatic.when(ServiceManager::getInstance).thenReturn(serviceManager);
 
             hetznerCloudMockedStatic.when(HetznerCloud::getInstance).thenReturn(hetznerCloud);
-            hetznerCloudMockedStatic.when(HetznerCloud::getServiceManager).thenReturn(serviceManager);
-            hetznerCloudMockedStatic.when(HetznerCloud::getListenerManager).thenReturn(listenerManager);
+
+            when(hetznerCloud.getServiceManager()).thenReturn(serviceManager);
+            when(hetznerCloud.getListenerManager()).thenReturn(listenerManager);
 
             when(hetznerCloud.getHttpDetails()).thenReturn(List.of("http://host/", "key1234"));
 
@@ -188,8 +211,9 @@ class ServerServiceTest {
             serviceManagerMockedStatic.when(ServiceManager::getInstance).thenReturn(serviceManager);
 
             hetznerCloudMockedStatic.when(HetznerCloud::getInstance).thenReturn(hetznerCloud);
-            hetznerCloudMockedStatic.when(HetznerCloud::getServiceManager).thenReturn(serviceManager);
-            hetznerCloudMockedStatic.when(HetznerCloud::getListenerManager).thenReturn(listenerManager);
+
+            when(hetznerCloud.getServiceManager()).thenReturn(serviceManager);
+            when(hetznerCloud.getListenerManager()).thenReturn(listenerManager);
 
             when(hetznerCloud.getHttpDetails()).thenReturn(List.of("http://host/", "key1234"));
 
@@ -244,8 +268,9 @@ class ServerServiceTest {
             serviceManagerMockedStatic.when(ServiceManager::getInstance).thenReturn(serviceManager);
 
             hetznerCloudMockedStatic.when(HetznerCloud::getInstance).thenReturn(hetznerCloud);
-            hetznerCloudMockedStatic.when(HetznerCloud::getServiceManager).thenReturn(serviceManager);
-            hetznerCloudMockedStatic.when(HetznerCloud::getListenerManager).thenReturn(listenerManager);
+
+            when(hetznerCloud.getServiceManager()).thenReturn(serviceManager);
+            when(hetznerCloud.getListenerManager()).thenReturn(listenerManager);
 
             when(hetznerCloud.getHttpDetails()).thenReturn(List.of("http://host/", "key1234"));
 
@@ -303,8 +328,9 @@ class ServerServiceTest {
             serviceManagerMockedStatic.when(ServiceManager::getInstance).thenReturn(serviceManager);
 
             hetznerCloudMockedStatic.when(HetznerCloud::getInstance).thenReturn(hetznerCloud);
-            hetznerCloudMockedStatic.when(HetznerCloud::getServiceManager).thenReturn(serviceManager);
-            hetznerCloudMockedStatic.when(HetznerCloud::getListenerManager).thenReturn(listenerManager);
+
+            when(hetznerCloud.getServiceManager()).thenReturn(serviceManager);
+            when(hetznerCloud.getListenerManager()).thenReturn(listenerManager);
 
             when(hetznerCloud.getHttpDetails()).thenReturn(List.of("http://host/", "key1234"));
 
@@ -359,8 +385,8 @@ class ServerServiceTest {
             serverDTOList.setServers(List.of(serverDTO));
 
             hetznerCloudHttpClientMockedStatic.when(HetznerCloudHttpClient::getInstance).thenReturn(hetznerCloudHttpClient);
-            hetznerCloudMockedStatic.when(HetznerCloud::getListenerManager).thenReturn(listenerManager);
             hetznerCloudMockedStatic.when(HetznerCloud::getInstance).thenReturn(hetznerCloud);
+            when(hetznerCloud.getListenerManager()).thenReturn(listenerManager);
             when(hetznerCloud.getHttpDetails()).thenReturn(List.of("http://host/", "key1234"));
             when(hetznerCloud.hasApiKey()).thenReturn(true);
             when(hetznerCloudHttpClient.sendHttpRequest(any(), anyString(), any(RequestVerb.class), anyString())).thenReturn(serverDTOList);
@@ -372,4 +398,148 @@ class ServerServiceTest {
             assertEquals(serverDTO.getName(), server.getName());
         }
     }
+
+    @Test
+    @DisplayName("getServer returns a server from the cache when multiple are in the cache")
+    void getServerReturnsAServerFromTheCacheWithMultipleCached() throws IOException, InterruptedException, IllegalAccessException {
+        HetznerCloud hetznerCloud = mock(HetznerCloud.class);
+        HetznerCloudHttpClient hetznerCloudHttpClient = mock(HetznerCloudHttpClient.class);
+        ListenerManager listenerManager = mock(ListenerManager.class);
+
+        try (MockedStatic<HetznerCloud> hetznerCloudMockedStatic = mockStatic(HetznerCloud.class);
+             MockedStatic<HetznerCloudHttpClient> hetznerCloudHttpClientMockedStatic = mockStatic(HetznerCloudHttpClient.class)) {
+            ServerDTOList serverDTOList = new ServerDTOList();
+            ServerDTO serverDTO = new ServerDTO();
+            serverDTO.setName("name");
+            serverDTO.setId(1);
+            ServerDTO serverDTO2 = new ServerDTO();
+            serverDTO2.setName("name2");
+            serverDTO2.setId(2);
+            serverDTOList.setServers(List.of(serverDTO2, serverDTO));
+
+            hetznerCloudHttpClientMockedStatic.when(HetznerCloudHttpClient::getInstance).thenReturn(hetznerCloudHttpClient);
+            hetznerCloudMockedStatic.when(HetznerCloud::getInstance).thenReturn(hetznerCloud);
+            when(hetznerCloud.getListenerManager()).thenReturn(listenerManager);
+            when(hetznerCloud.getHttpDetails()).thenReturn(List.of("http://host/", "key1234"));
+            when(hetznerCloud.hasApiKey()).thenReturn(true);
+            when(hetznerCloudHttpClient.sendHttpRequest(any(), anyString(), any(RequestVerb.class), anyString())).thenReturn(serverDTOList);
+
+            ServerService serverService = new ServerService();
+
+            Server server = serverService.getServer(2);
+
+            assertEquals(serverDTO2.getName(), server.getName());
+        }
+    }
+
+    @Test
+    @DisplayName("getServer returns null when it's not found")
+    void getServerReturnsNullWhenItIsNotFound() throws IOException, InterruptedException, IllegalAccessException {
+        HetznerCloud hetznerCloud = mock(HetznerCloud.class);
+        HetznerCloudHttpClient hetznerCloudHttpClient = mock(HetznerCloudHttpClient.class);
+        ListenerManager listenerManager = mock(ListenerManager.class);
+
+        try (MockedStatic<HetznerCloud> hetznerCloudMockedStatic = mockStatic(HetznerCloud.class);
+             MockedStatic<HetznerCloudHttpClient> hetznerCloudHttpClientMockedStatic = mockStatic(HetznerCloudHttpClient.class)) {
+            ServerDTOList serverDTOList = new ServerDTOList();
+            ServerDTO serverDTO = new ServerDTO();
+            serverDTO.setName("name");
+            serverDTO.setId(20);
+            serverDTOList.setServers(List.of(serverDTO));
+
+            hetznerCloudHttpClientMockedStatic.when(HetznerCloudHttpClient::getInstance).thenReturn(hetznerCloudHttpClient);
+            hetznerCloudMockedStatic.when(HetznerCloud::getInstance).thenReturn(hetznerCloud);
+            when(hetznerCloud.getListenerManager()).thenReturn(listenerManager);
+            when(hetznerCloud.getHttpDetails()).thenReturn(List.of("http://host/", "key1234"));
+            when(hetznerCloud.hasApiKey()).thenReturn(true);
+            when(hetznerCloudHttpClient.sendHttpRequest(any(), anyString(), any(RequestVerb.class), anyString())).thenReturn(serverDTOList);
+
+            ServerService serverService = new ServerService();
+
+            Server server = serverService.getServer(1);
+
+            assertNull(server);
+        }
+    }
+
+    @Test
+    @DisplayName("If no API key is present, refreshing the cache does nothing")
+    void ifNoAPIKeyPresentRefreshCacheDoesNothing() {
+        HetznerCloud hetznerCloud = mock(HetznerCloud.class);
+
+        try (MockedStatic<HetznerCloud> hetznerCloudMockedStatic = mockStatic(HetznerCloud.class)) {
+            hetznerCloudMockedStatic.when(HetznerCloud::getInstance).thenReturn(hetznerCloud);
+            ServerService serverService = new ServerService();
+            assertDoesNotThrow(serverService::forceRefreshServersCache);
+        }
+    }
+
+    @Test
+    @DisplayName("When http client throws, updateAllRemoteServers also throws a Runtime Exception")
+    void whenHttpClientThrowsRuntimeException() throws IOException, InterruptedException, IllegalAccessException {
+        HetznerCloud hetznerCloud = mock(HetznerCloud.class);
+        HetznerCloudHttpClient hetznerCloudHttpClient = mock(HetznerCloudHttpClient.class);
+        ListenerManager listenerManager = mock(ListenerManager.class);
+
+        try (MockedStatic<HetznerCloud> hetznerCloudMockedStatic = mockStatic(HetznerCloud.class);
+             MockedStatic<HetznerCloudHttpClient> hetznerCloudHttpClientMockedStatic = mockStatic(HetznerCloudHttpClient.class)) {
+
+            hetznerCloudHttpClientMockedStatic.when(HetznerCloudHttpClient::getInstance).thenReturn(hetznerCloudHttpClient);
+            hetznerCloudMockedStatic.when(HetznerCloud::getInstance).thenReturn(hetznerCloud);
+            when(hetznerCloud.getListenerManager()).thenReturn(listenerManager);
+            when(hetznerCloud.getHttpDetails()).thenReturn(List.of("http://host/", "key1234"));
+            when(hetznerCloud.hasApiKey()).thenReturn(true);
+            when(hetznerCloudHttpClient.sendHttpRequest(any(), anyString(), any(RequestVerb.class), anyString())).thenThrow(IOException.class);
+
+            ServerService serverService = new ServerService();
+
+            RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> serverService.getServer(1));
+
+            assertTrue(runtimeException.getMessage().contains("IOException"));
+
+        }
+    }
+
+    @Test
+    @DisplayName("Cache is refreshed if it was last refreshed over 10 minutes ago")
+    void cacheIsRefreshedIfItWasLastRefreshedOver10MinutesAgo() throws IOException, InterruptedException, IllegalAccessException {
+        mockInstant(1731856842);
+        HetznerCloud hetznerCloud = mock(HetznerCloud.class);
+        HetznerCloudHttpClient hetznerCloudHttpClient = mock(HetznerCloudHttpClient.class);
+        ListenerManager listenerManager = mock(ListenerManager.class);
+
+        try (MockedStatic<HetznerCloud> hetznerCloudMockedStatic = mockStatic(HetznerCloud.class);
+             MockedStatic<HetznerCloudHttpClient> hetznerCloudHttpClientMockedStatic = mockStatic(HetznerCloudHttpClient.class)) {
+            ServerDTOList serverDTOList = new ServerDTOList();
+            ServerDTO serverDTO = new ServerDTO();
+            serverDTO.setName("name");
+            serverDTO.setId(1);
+            serverDTOList.setServers(List.of(serverDTO));
+
+            hetznerCloudHttpClientMockedStatic.when(HetznerCloudHttpClient::getInstance).thenReturn(hetznerCloudHttpClient);
+            hetznerCloudMockedStatic.when(HetznerCloud::getInstance).thenReturn(hetznerCloud);
+            when(hetznerCloud.getListenerManager()).thenReturn(listenerManager);
+            when(hetznerCloud.getHttpDetails()).thenReturn(List.of("http://host/", "key1234"));
+            when(hetznerCloud.hasApiKey()).thenReturn(true);
+            when(hetznerCloudHttpClient.sendHttpRequest(any(), anyString(), any(RequestVerb.class), anyString())).thenReturn(serverDTOList);
+
+            ServerService serverService = new ServerService();
+            serverService.getServer(1);
+
+            verify(hetznerCloudHttpClient, times(1)).sendHttpRequest(any(), anyString(), any(RequestVerb.class), anyString());
+
+            mockInstant(1731857082);
+
+            serverService.getServer(1);
+            verify(hetznerCloudHttpClient, times(1)).sendHttpRequest(any(), anyString(), any(RequestVerb.class), anyString());
+
+            mockInstant(1731858342);
+
+            serverService.getServer(1);
+
+            verify(hetznerCloudHttpClient, times(2)).sendHttpRequest(any(), anyString(), any(RequestVerb.class), anyString());
+        }
+
+    }
+
 }

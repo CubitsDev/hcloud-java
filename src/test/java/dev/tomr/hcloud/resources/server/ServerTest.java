@@ -114,8 +114,10 @@ class ServerTest {
     void callingSetLabelsUpdatesLabels() {
         try (MockedStatic<HetznerCloud> hetznerCloudMockedStatic = mockStatic(HetznerCloud.class);
             MockedStatic<ListenerManager> listenerManagerMockedStatic = mockStatic(ListenerManager.class)) {
+            HetznerCloud hetznerCloud = mock(HetznerCloud.class);
             ListenerManager listenerManager = mock(ListenerManager.class);
-            hetznerCloudMockedStatic.when(HetznerCloud::getListenerManager).thenReturn(listenerManager);
+            hetznerCloudMockedStatic.when(HetznerCloud::getInstance).thenReturn(hetznerCloud);
+            when(hetznerCloud.getListenerManager()).thenReturn(listenerManager);
 
             Server server = new Server();
             server.setLabels(Map.of("label", "value"));
@@ -130,13 +132,15 @@ class ServerTest {
         try (MockedStatic<HetznerCloud> hetznerCloud = mockStatic(HetznerCloud.class)) {
             ServerChangeListener scl = new ServerChangeListener();
             ServerChangeListener serverChangeListener = spy(scl);
+            HetznerCloud hetznerCloudMock = mock(HetznerCloud.class);
             ListenerManager listenerManager = mock(ListenerManager.class);
             ServiceManager serviceManager = mock(ServiceManager.class);
             ServerService serverService = mock(ServerService.class);
             ArgumentCaptor<PropertyChangeEvent> captor = ArgumentCaptor.forClass(PropertyChangeEvent.class);
 
-            hetznerCloud.when(HetznerCloud::getServiceManager).thenReturn(serviceManager);
-            hetznerCloud.when(HetznerCloud::getListenerManager).thenReturn(listenerManager);
+            hetznerCloud.when(HetznerCloud::getInstance).thenReturn(hetznerCloudMock);
+            when(hetznerCloudMock.getListenerManager()).thenReturn(listenerManager);
+            when(hetznerCloudMock.getServiceManager()).thenReturn(serviceManager);
             when(listenerManager.getServerChangeListener()).thenReturn(serverChangeListener);
             when(serviceManager.getServerService()).thenReturn(serverService);
 
@@ -153,10 +157,11 @@ class ServerTest {
     @Test
     @DisplayName("calling setName updates the name")
     void callingSetNameUpdatesTheName() {
-        try (MockedStatic<HetznerCloud> hetznerCloudMockedStatic = mockStatic(HetznerCloud.class);
-             MockedStatic<ListenerManager> listenerManagerMockedStatic = mockStatic(ListenerManager.class)) {
+        try (MockedStatic<HetznerCloud> hetznerCloudMockedStatic = mockStatic(HetznerCloud.class)) {
+            HetznerCloud hetznerCloud = mock(HetznerCloud.class);
             ListenerManager listenerManager = mock(ListenerManager.class);
-            hetznerCloudMockedStatic.when(HetznerCloud::getListenerManager).thenReturn(listenerManager);
+            hetznerCloudMockedStatic.when(HetznerCloud::getInstance).thenReturn(hetznerCloud);
+            when(hetznerCloud.getListenerManager()).thenReturn(listenerManager);
             Server server = new Server();
             server.setName("name");
             assertEquals("name", server.getName());
@@ -167,6 +172,7 @@ class ServerTest {
     @DisplayName("calling setName sends an event to the ServerChangeListener")
     void callingSetNameSendsAnEventToTheServerChangeListener() {
         try (MockedStatic<HetznerCloud> hetznerCloud = mockStatic(HetznerCloud.class)) {
+            HetznerCloud hetznerCloudMock = mock(HetznerCloud.class);
             ServerChangeListener scl = new ServerChangeListener();
             ServerChangeListener serverChangeListener = spy(scl);
             ListenerManager listenerManager = mock(ListenerManager.class);
@@ -174,8 +180,9 @@ class ServerTest {
             ServerService serverService = mock(ServerService.class);
             ArgumentCaptor<PropertyChangeEvent> captor = ArgumentCaptor.forClass(PropertyChangeEvent.class);
 
-            hetznerCloud.when(HetznerCloud::getServiceManager).thenReturn(serviceManager);
-            hetznerCloud.when(HetznerCloud::getListenerManager).thenReturn(listenerManager);
+            hetznerCloud.when(HetznerCloud::getInstance).thenReturn(hetznerCloudMock);
+            when(hetznerCloudMock.getListenerManager()).thenReturn(listenerManager);
+            when(hetznerCloudMock.getServiceManager()).thenReturn(serviceManager);
             when(listenerManager.getServerChangeListener()).thenReturn(serverChangeListener);
             when(serviceManager.getServerService()).thenReturn(serverService);
 
