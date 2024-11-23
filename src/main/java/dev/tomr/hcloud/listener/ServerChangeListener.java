@@ -19,8 +19,13 @@ public class ServerChangeListener implements PropertyChangeListener {
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         Server server = (Server) evt.getSource();
-        logger.info("Server changed: " + evt.getPropertyName());
-        logger.info("Server: " + evt.getOldValue() + " -> " + evt.getNewValue());
-        HetznerCloud.getInstance().getServiceManager().getServerService().serverNameOrLabelUpdate(evt.getPropertyName(), evt.getNewValue(), server);
+        if (evt.getPropertyName().equals("delete")) {
+            logger.warn("Server delete has been called. Instructing Hetzner to delete");
+            HetznerCloud.getInstance().getServiceManager().getServerService().deleteServerFromHetzner(server);
+        } else {
+            logger.info("Server changed: " + evt.getPropertyName());
+            logger.info("Server: " + evt.getOldValue() + " -> " + evt.getNewValue());
+            HetznerCloud.getInstance().getServiceManager().getServerService().serverNameOrLabelUpdate(evt.getPropertyName(), evt.getNewValue(), server);
+        }
     }
 }

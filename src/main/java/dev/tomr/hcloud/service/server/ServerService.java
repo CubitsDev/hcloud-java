@@ -3,6 +3,7 @@ package dev.tomr.hcloud.service.server;
 import dev.tomr.hcloud.HetznerCloud;
 import dev.tomr.hcloud.http.HetznerCloudHttpClient;
 import dev.tomr.hcloud.http.converter.ServerConverterUtil;
+import dev.tomr.hcloud.http.model.Action;
 import dev.tomr.hcloud.http.model.ServerDTO;
 import dev.tomr.hcloud.http.model.ServerDTOList;
 import dev.tomr.hcloud.resources.server.Server;
@@ -22,8 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static dev.tomr.hcloud.http.RequestVerb.GET;
-import static dev.tomr.hcloud.http.RequestVerb.PUT;
+import static dev.tomr.hcloud.http.RequestVerb.*;
 
 public class ServerService {
     protected static final Logger logger = LogManager.getLogger();
@@ -98,6 +98,18 @@ public class ServerService {
         updatedFields.clear();
     }
 
+    public void deleteServerFromHetzner(Server server) {
+        List<String> hostAndKey = HetznerCloud.getInstance().getHttpDetails();
+        String httpUrl = String.format("%sservers/%d", hostAndKey.get(0), server.getId());
+        try {
+            Action action = client.sendHttpRequest(Action.class, httpUrl, DELETE, hostAndKey.get(1));
+
+        } catch (IOException | IllegalAccessException | InterruptedException e) {
+            logger.error("Failed to delete the Server");
+            throw new RuntimeException(e);
+        }
+    }
+
     private void updateAllRemoteServers() {
         Map<Date, Server> newServerMap = new HashMap<>();
         List<String> hostAndKey = HetznerCloud.getInstance().getHttpDetails();
@@ -116,6 +128,11 @@ public class ServerService {
         lastFullRefresh = Date.from(Instant.now());
     }
 
+    /**
+     * Get a server, will refresh the cache if the cache is out of date
+     * @param id ID of the wanted server
+     * @return Server object from Hetzner
+     */
     public Server getServer(Integer id) {
         verifyCacheUpToDate();
         for (var entry : remoteServers.entrySet()) {

@@ -3,6 +3,7 @@ package dev.tomr.hcloud.service.server;
 import dev.tomr.hcloud.HetznerCloud;
 import dev.tomr.hcloud.http.HetznerCloudHttpClient;
 import dev.tomr.hcloud.http.RequestVerb;
+import dev.tomr.hcloud.http.model.Action;
 import dev.tomr.hcloud.http.model.ServerDTO;
 import dev.tomr.hcloud.http.model.ServerDTOList;
 import dev.tomr.hcloud.listener.ListenerManager;
@@ -540,6 +541,57 @@ class ServerServiceTest {
             verify(hetznerCloudHttpClient, times(2)).sendHttpRequest(any(), anyString(), any(RequestVerb.class), anyString());
         }
 
+    }
+
+    @Test
+    @DisplayName("Delete Server From Hetzner calls Hetzner and tracks the action")
+    void deleteServerFromHetznerAndTracksTheAction() throws IOException, InterruptedException, IllegalAccessException {
+        HetznerCloud hetznerCloud = mock(HetznerCloud.class);
+        HetznerCloudHttpClient hetznerCloudHttpClient = mock(HetznerCloudHttpClient.class);
+        ListenerManager listenerManager = mock(ListenerManager.class);
+
+        try (MockedStatic<HetznerCloud> hetznerCloudMockedStatic = mockStatic(HetznerCloud.class);
+             MockedStatic<HetznerCloudHttpClient> hetznerCloudHttpClientMockedStatic = mockStatic(HetznerCloudHttpClient.class)) {
+
+            hetznerCloudHttpClientMockedStatic.when(HetznerCloudHttpClient::getInstance).thenReturn(hetznerCloudHttpClient);
+            hetznerCloudMockedStatic.when(HetznerCloud::getInstance).thenReturn(hetznerCloud);
+            when(hetznerCloud.getListenerManager()).thenReturn(listenerManager);
+            when(hetznerCloud.getHttpDetails()).thenReturn(List.of("http://host/", "key1234"));
+
+            when(hetznerCloudHttpClient.sendHttpRequest(any(), anyString(), any(RequestVerb.class), anyString())).thenReturn(new Action());
+
+            ServerService serverService = new ServerService();
+            serverService.deleteServerFromHetzner(new Server());
+
+            verify(hetznerCloudHttpClient, times(1)).sendHttpRequest(any(), anyString(), eq(RequestVerb.DELETE), eq("key1234"));
+        }
+    }
+
+    @Test
+    @DisplayName("When httpclient throws, then delete Server From Hetzner also throws a Runtime exception")
+    void deleteServerFromHetznerHandlesException() throws IOException, InterruptedException, IllegalAccessException {
+        HetznerCloud hetznerCloud = mock(HetznerCloud.class);
+        HetznerCloudHttpClient hetznerCloudHttpClient = mock(HetznerCloudHttpClient.class);
+        ListenerManager listenerManager = mock(ListenerManager.class);
+
+        try (MockedStatic<HetznerCloud> hetznerCloudMockedStatic = mockStatic(HetznerCloud.class);
+             MockedStatic<HetznerCloudHttpClient> hetznerCloudHttpClientMockedStatic = mockStatic(HetznerCloudHttpClient.class)) {
+
+            hetznerCloudHttpClientMockedStatic.when(HetznerCloudHttpClient::getInstance).thenReturn(hetznerCloudHttpClient);
+            hetznerCloudMockedStatic.when(HetznerCloud::getInstance).thenReturn(hetznerCloud);
+            when(hetznerCloud.getListenerManager()).thenReturn(listenerManager);
+            when(hetznerCloud.getHttpDetails()).thenReturn(List.of("http://host/", "key1234"));
+
+            when(hetznerCloudHttpClient.sendHttpRequest(any(), anyString(), any(RequestVerb.class), anyString())).thenThrow(new IOException());
+
+            ServerService serverService = new ServerService();
+
+            RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> serverService.deleteServerFromHetzner(new Server()));
+
+            verify(hetznerCloudHttpClient, times(1)).sendHttpRequest(any(), anyString(), eq(RequestVerb.DELETE), eq("key1234"));
+
+            assertTrue(runtimeException.getMessage().contains("IOException"));
+        }
     }
 
 }

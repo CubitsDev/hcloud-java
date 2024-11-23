@@ -1,6 +1,5 @@
 package dev.tomr.hcloud.http;
 
-import dev.tomr.hcloud.HetznerCloud;
 import dev.tomr.hcloud.http.exception.HetznerApiException;
 import dev.tomr.hcloud.http.model.HetznerErrorResponse;
 import org.slf4j.Logger;
@@ -98,6 +97,7 @@ public class HetznerCloudHttpClient {
             case GET -> builder.GET();
             case POST -> builder.POST(HttpRequest.BodyPublishers.ofString(body));
             case PUT -> builder.PUT(HttpRequest.BodyPublishers.ofString(body));
+            case DELETE -> builder.DELETE();
         };
         return builder.build();
     }

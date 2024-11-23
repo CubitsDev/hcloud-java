@@ -11,7 +11,7 @@ public class ListenerManager {
     }
 
     /**
-     * Get's the ListenerManager Instance, creates one if it doesn't exist
+     * Gets the ListenerManager Instance, creates one if it doesn't exist
      * @return {@code ListenerManager} in use
      */
     public static ListenerManager getInstance() {
