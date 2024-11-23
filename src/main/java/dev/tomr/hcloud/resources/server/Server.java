@@ -97,6 +97,13 @@ public class Server implements Serializable {
         propertyChangeSupport.addPropertyChangeListener(HetznerCloud.getInstance().getListenerManager().getServerChangeListener());
     }
 
+    /**
+     * Deletes a Server from Hetzner. Note, this is immediate and destructive. Ensure you want to delete the server before calling.
+     */
+    public void delete() {
+        propertyChangeSupport.firePropertyChange("delete", null, null);
+    }
+
 
     // These are the current setters that will send an API request (PUT /servers) when actions begin to be added, they will also likely be triggered by setters
 

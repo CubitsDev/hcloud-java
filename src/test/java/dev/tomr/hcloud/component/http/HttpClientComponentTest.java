@@ -129,4 +129,19 @@ public class HttpClientComponentTest {
 
         assertDoesNotThrow(() -> client.sendHttpRequest(TestModel.class, HOST + "test", RequestVerb.GET, ""));
     }
+
+    @Test
+    @DisplayName("HTTP Client can make a successful DELETE request and map to class")
+    public void testHttpClientAndMappingDelete() throws IOException, InterruptedException, IllegalAccessException {
+        wireMockExtension.stubFor(delete("/test").willReturn(ok(objectMapper.writeValueAsString(new TestModel(1, 1, "sunt aut facere repellat provident occaecati excepturi optio reprehenderit", "quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto")))));
+
+        HetznerCloudHttpClient client = new HetznerCloudHttpClient();
+
+        TestModel testModel = client.sendHttpRequest(TestModel.class, HOST + "test", RequestVerb.DELETE, "");
+
+        assertEquals(1, testModel.getId());
+        assertEquals(1, testModel.getUserId());
+        assertEquals("sunt aut facere repellat provident occaecati excepturi optio reprehenderit", testModel.getTitle());
+        assertEquals("quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto", testModel.getBody());
+    }
 }
