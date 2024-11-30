@@ -10,6 +10,7 @@ import dev.tomr.hcloud.listener.ListenerManager;
 import dev.tomr.hcloud.resources.common.*;
 import dev.tomr.hcloud.resources.server.Server;
 import dev.tomr.hcloud.service.ServiceManager;
+import dev.tomr.hcloud.service.action.ActionService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -25,6 +26,8 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeoutException;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -549,6 +552,40 @@ class ServerServiceTest {
         HetznerCloud hetznerCloud = mock(HetznerCloud.class);
         HetznerCloudHttpClient hetznerCloudHttpClient = mock(HetznerCloudHttpClient.class);
         ListenerManager listenerManager = mock(ListenerManager.class);
+        ServiceManager serviceManager = mock(ServiceManager.class);
+        ActionService actionService = mock(ActionService.class);
+
+        try (MockedStatic<HetznerCloud> hetznerCloudMockedStatic = mockStatic(HetznerCloud.class);
+             MockedStatic<HetznerCloudHttpClient> hetznerCloudHttpClientMockedStatic = mockStatic(HetznerCloudHttpClient.class)) {
+
+            Action action = new Action();
+            action.setFinished(Date.from(Instant.now()).toString());
+
+            hetznerCloudHttpClientMockedStatic.when(HetznerCloudHttpClient::getInstance).thenReturn(hetznerCloudHttpClient);
+            hetznerCloudMockedStatic.when(HetznerCloud::getInstance).thenReturn(hetznerCloud);
+            when(hetznerCloud.getListenerManager()).thenReturn(listenerManager);
+            when(hetznerCloud.getHttpDetails()).thenReturn(List.of("http://host/", "key1234"));
+            when(serviceManager.getActionService()).thenReturn(actionService);
+            when(actionService.waitForActionToComplete(any(Action.class))).thenReturn(CompletableFuture.completedFuture(action));
+
+            when(hetznerCloudHttpClient.sendHttpRequest(any(), anyString(), any(RequestVerb.class), anyString())).thenReturn(new Action());
+
+            ServerService serverService = new ServerService(serviceManager);
+            serverService.deleteServerFromHetzner(new Server());
+
+            verify(hetznerCloudHttpClient, times(1)).sendHttpRequest(any(), anyString(), eq(RequestVerb.DELETE), eq("key1234"));
+            verify(actionService, times(1)).waitForActionToComplete(any(Action.class));
+        }
+    }
+
+    @Test
+    @DisplayName("When actionService throws, then delete Server from Hetzner also throws a Runtime exception")
+    void whenActionServiceThrowsDeleteServerAlsoThrows() throws IOException, InterruptedException, IllegalAccessException {
+        HetznerCloud hetznerCloud = mock(HetznerCloud.class);
+        HetznerCloudHttpClient hetznerCloudHttpClient = mock(HetznerCloudHttpClient.class);
+        ListenerManager listenerManager = mock(ListenerManager.class);
+        ServiceManager serviceManager = mock(ServiceManager.class);
+        ActionService actionService = mock(ActionService.class);
 
         try (MockedStatic<HetznerCloud> hetznerCloudMockedStatic = mockStatic(HetznerCloud.class);
              MockedStatic<HetznerCloudHttpClient> hetznerCloudHttpClientMockedStatic = mockStatic(HetznerCloudHttpClient.class)) {
@@ -557,13 +594,20 @@ class ServerServiceTest {
             hetznerCloudMockedStatic.when(HetznerCloud::getInstance).thenReturn(hetznerCloud);
             when(hetznerCloud.getListenerManager()).thenReturn(listenerManager);
             when(hetznerCloud.getHttpDetails()).thenReturn(List.of("http://host/", "key1234"));
+            when(serviceManager.getActionService()).thenReturn(actionService);
+
+            when(actionService.waitForActionToComplete(any(Action.class))).thenReturn(CompletableFuture.failedFuture(new RuntimeException(new TimeoutException())));
 
             when(hetznerCloudHttpClient.sendHttpRequest(any(), anyString(), any(RequestVerb.class), anyString())).thenReturn(new Action());
 
-            ServerService serverService = new ServerService();
-            serverService.deleteServerFromHetzner(new Server());
+            ServerService serverService = new ServerService(serviceManager);
+
+            RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> serverService.deleteServerFromHetzner(new Server()));
 
             verify(hetznerCloudHttpClient, times(1)).sendHttpRequest(any(), anyString(), eq(RequestVerb.DELETE), eq("key1234"));
+            verify(actionService, times(1)).waitForActionToComplete(any(Action.class));
+
+            assertTrue(runtimeException.getMessage().contains("TimeoutException"));
         }
     }
 

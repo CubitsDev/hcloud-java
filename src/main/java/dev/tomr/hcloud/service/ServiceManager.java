@@ -1,5 +1,6 @@
 package dev.tomr.hcloud.service;
 
+import dev.tomr.hcloud.service.action.ActionService;
 import dev.tomr.hcloud.service.server.ServerService;
 
 import java.util.concurrent.ExecutorService;
@@ -9,12 +10,14 @@ public class ServiceManager {
     private static ServiceManager instance;
 
     private final ServerService serverService;
+    private final ActionService actionService;
 
     private ExecutorService executor;
 
     private ServiceManager() {
         instance = this;
         this.serverService = new ServerService(this);
+        this.actionService = new ActionService();
     }
 
     /**
@@ -34,6 +37,14 @@ public class ServiceManager {
      */
     public ServerService getServerService() {
         return serverService;
+    }
+
+    /**
+     * Get ActionService Instance
+     * @return the {@code ActionService} instance
+     */
+    public ActionService getActionService() {
+        return actionService;
     }
 
     /**

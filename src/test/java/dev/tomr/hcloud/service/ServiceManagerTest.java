@@ -1,5 +1,6 @@
 package dev.tomr.hcloud.service;
 
+import dev.tomr.hcloud.service.action.ActionService;
 import dev.tomr.hcloud.service.server.ServerService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -74,6 +75,14 @@ class ServiceManagerTest {
     void callingCloseExecutorDoesNothingIfExecutorIsNull() {
         ServiceManager serviceManager = ServiceManager.getInstance();
         assertDoesNotThrow(serviceManager::closeExecutor);
+    }
+
+    @Test
+    @DisplayName("Calling getActionService returns the ActionService instance")
+    void callingGetActionServiceReturnsTheActionServiceInstance() {
+        ServiceManager serviceManager = ServiceManager.getInstance();
+        assertInstanceOf(ActionService.class, serviceManager.getActionService());
+        assertNotNull(serviceManager.getActionService());
     }
 
 }

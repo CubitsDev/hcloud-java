@@ -1,6 +1,8 @@
 package dev.tomr.hcloud;
 
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import dev.tomr.hcloud.listener.ListenerManager;
 import dev.tomr.hcloud.resources.server.Server;
 import dev.tomr.hcloud.service.ServiceManager;
@@ -15,7 +17,7 @@ import java.util.List;
 public class HetznerCloud {
     protected static final Logger logger = LogManager.getLogger();
 
-    private static final ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper objectMapper = JsonMapper.builder().configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true).build();
     private static final String HETZNER_CLOUD_HOST = "https://api.hetzner.cloud/v1/";
 
     private static HetznerCloud instance;
