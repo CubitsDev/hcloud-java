@@ -4,6 +4,7 @@ import dev.tomr.hcloud.HetznerCloud;
 import dev.tomr.hcloud.http.HetznerCloudHttpClient;
 import dev.tomr.hcloud.http.converter.ServerConverterUtil;
 import dev.tomr.hcloud.http.model.Action;
+import dev.tomr.hcloud.http.model.ActionWrapper;
 import dev.tomr.hcloud.http.model.ServerDTO;
 import dev.tomr.hcloud.http.model.ServerDTOList;
 import dev.tomr.hcloud.resources.server.Server;
@@ -22,6 +23,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Function;
 
 import static dev.tomr.hcloud.http.RequestVerb.*;
 
@@ -101,10 +103,25 @@ public class ServerService {
     public void deleteServerFromHetzner(Server server) {
         List<String> hostAndKey = HetznerCloud.getInstance().getHttpDetails();
         String httpUrl = String.format("%sservers/%d", hostAndKey.get(0), server.getId());
+        AtomicReference<String> exceptionMsg = new AtomicReference<>();
         try {
-            Action action = client.sendHttpRequest(Action.class, httpUrl, DELETE, hostAndKey.get(1));
-
-        } catch (IOException | IllegalAccessException | InterruptedException e) {
+            Action action = client.sendHttpRequest(ActionWrapper.class, httpUrl, DELETE, hostAndKey.get(1)).getAction();
+            CompletableFuture<Action> completedActionFuture = serviceManager.getActionService().waitForActionToComplete(action).thenApplyAsync((completedAction) -> {
+                if (action == null) {
+                    throw new NullPointerException();
+                }
+                logger.info("Server confirmed deleted at {}", completedAction.getFinished());
+                return completedAction;
+            }).exceptionally((e) -> {
+                logger.error("Server delete failed");
+                logger.error(e.getMessage());
+                exceptionMsg.set(e.getMessage());
+                return null;
+            });
+            if (completedActionFuture.get() == null) {
+                throw new RuntimeException(exceptionMsg.get());
+            }
+        } catch (Exception e) {
             logger.error("Failed to delete the Server");
             throw new RuntimeException(e);
         }
