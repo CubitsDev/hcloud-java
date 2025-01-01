@@ -49,6 +49,7 @@ public class ActionService {
             futures.forEach((f) -> {
                 f.cancel(true);
             });
+            scheduler.shutdownNow();
             return completedAction.get();
         });
     }
