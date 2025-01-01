@@ -23,9 +23,9 @@ public class ActionService {
     }
 
     public CompletableFuture<Action> waitForActionToComplete(Action action) {
+        List<String> hostAndKey = HetznerCloud.getInstance().getHttpDetails();
         return CompletableFuture.supplyAsync(() -> {
             ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-            List<String> hostAndKey = HetznerCloud.getInstance().getHttpDetails();
             List<Future<Action>> futures = new ArrayList<>();
             AtomicReference<Action> completedAction = new AtomicReference<>();
             futures.add(scheduler.schedule(createCheckCallable(action, hostAndKey), 0, TimeUnit.MILLISECONDS));
