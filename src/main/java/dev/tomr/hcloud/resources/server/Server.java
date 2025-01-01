@@ -97,11 +97,20 @@ public class Server implements Serializable {
         propertyChangeSupport.addPropertyChangeListener(HetznerCloud.getInstance().getListenerManager().getServerChangeListener());
     }
 
+    // The following methods are for calling Actions on the server
+
     /**
      * Deletes a Server from Hetzner. Note, this is immediate and destructive. Ensure you want to delete the server before calling.
      */
     public void delete() {
         propertyChangeSupport.firePropertyChange("delete", null, null);
+    }
+
+    /**
+     * Sends a Shutdown signal to the server, which will instruct the OS to shut it down. Note that if you **must** ensure the server is completely offline, you should also call .powerOff() to ensure the 'plug is pulled'
+     */
+    public void shutdown() {
+        propertyChangeSupport.firePropertyChange("shutdown", null, null);
     }
 
 

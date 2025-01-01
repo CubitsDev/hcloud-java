@@ -23,7 +23,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Function;
 
 import static dev.tomr.hcloud.http.RequestVerb.*;
 
@@ -123,6 +122,33 @@ public class ServerService {
             }
         } catch (Exception e) {
             logger.error("Failed to delete the Server");
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void shutdownServer(Server server) {
+        List<String> hostAndKey = HetznerCloud.getInstance().getHttpDetails();
+        String httpUrl = String.format("%sservers/%d/actions/poweroff", hostAndKey.get(0), server.getId());
+        AtomicReference<String> exceptionMsg = new AtomicReference<>();
+        try {
+            Action action = client.sendHttpRequest(ActionWrapper.class, httpUrl, POST, hostAndKey.get(1), "").getAction();
+            CompletableFuture<Action> completedActionFuture = serviceManager.getActionService().waitForActionToComplete(action).thenApplyAsync((completedAction) -> {
+                if (completedAction == null) {
+                    throw new NullPointerException();
+                }
+                logger.info("Server shutdown at {}", completedAction.getFinished());
+                return completedAction;
+            }).exceptionally((e) -> {
+                logger.error("Server shutdown failed");
+                logger.error(e.getMessage());
+                exceptionMsg.set(e.getMessage());
+                return null;
+            });
+            if (completedActionFuture.get() == null) {
+                throw new RuntimeException(exceptionMsg.get());
+            }
+        } catch (Exception e) {
+            logger.error("Failed to shutdown the Server");
             throw new RuntimeException(e);
         }
     }

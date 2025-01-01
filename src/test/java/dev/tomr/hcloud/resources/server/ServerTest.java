@@ -222,5 +222,31 @@ class ServerTest {
 
     }
 
+    @Test
+    @DisplayName("calling shutdown sends an event to the ServerChangeListener")
+    void callingShutdownSendsAnEventToTheServerChangeListener() {
+        try (MockedStatic<HetznerCloud> hetznerCloud = mockStatic(HetznerCloud.class)) {
+            HetznerCloud hetznerCloudMock = mock(HetznerCloud.class);
+            ServerChangeListener scl = new ServerChangeListener();
+            ServerChangeListener serverChangeListener = spy(scl);
+            ListenerManager listenerManager = mock(ListenerManager.class);
+            ServiceManager serviceManager = mock(ServiceManager.class);
+            ServerService serverService = mock(ServerService.class);
+            ArgumentCaptor<PropertyChangeEvent> captor = ArgumentCaptor.forClass(PropertyChangeEvent.class);
+
+            hetznerCloud.when(HetznerCloud::getInstance).thenReturn(hetznerCloudMock);
+            when(hetznerCloudMock.getListenerManager()).thenReturn(listenerManager);
+            when(hetznerCloudMock.getServiceManager()).thenReturn(serviceManager);
+            when(listenerManager.getServerChangeListener()).thenReturn(serverChangeListener);
+            when(serviceManager.getServerService()).thenReturn(serverService);
+
+            Server server = new Server();
+            server.shutdown();
+            verify(serverChangeListener, times(1)).propertyChange(captor.capture());
+            assertEquals("shutdown", captor.getValue().getPropertyName());
+        }
+
+    }
+
 
 }

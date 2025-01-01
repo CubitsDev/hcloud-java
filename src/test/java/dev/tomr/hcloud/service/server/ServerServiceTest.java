@@ -610,7 +610,7 @@ class ServerServiceTest {
     }
 
     @Test
-    @DisplayName("When Action returned from Hetzner is Null, server service throws a null pointer exception")
+    @DisplayName("When Delete Action returned from Hetzner is Null, server service throws a null pointer exception")
     void whenActionReturnedFromHetznerIsNullServerServiceThrowsANullPointer() throws IOException, InterruptedException, IllegalAccessException {
         HetznerCloud hetznerCloud = mock(HetznerCloud.class);
         HetznerCloudHttpClient hetznerCloudHttpClient = mock(HetznerCloudHttpClient.class);
@@ -666,6 +666,98 @@ class ServerServiceTest {
             verify(hetznerCloudHttpClient, times(1)).sendHttpRequest(any(), anyString(), eq(RequestVerb.DELETE), eq("key1234"));
 
             assertTrue(runtimeException.getMessage().contains("IOException"));
+        }
+    }
+
+    @Test
+    @DisplayName("Shutdown Server calls Hetzner and tracks the action")
+    void shutdownServerCallsHetznerAndTracksTheAction() throws IOException, InterruptedException, IllegalAccessException {
+        HetznerCloud hetznerCloud = mock(HetznerCloud.class);
+        HetznerCloudHttpClient hetznerCloudHttpClient = mock(HetznerCloudHttpClient.class);
+        ListenerManager listenerManager = mock(ListenerManager.class);
+        ServiceManager serviceManager = mock(ServiceManager.class);
+        ActionService actionService = mock(ActionService.class);
+
+        try (MockedStatic<HetznerCloud> hetznerCloudMockedStatic = mockStatic(HetznerCloud.class);
+             MockedStatic<HetznerCloudHttpClient> hetznerCloudHttpClientMockedStatic = mockStatic(HetznerCloudHttpClient.class)) {
+
+            Action action = new Action();
+            action.setFinished(Date.from(Instant.now()).toString());
+
+            hetznerCloudHttpClientMockedStatic.when(HetznerCloudHttpClient::getInstance).thenReturn(hetznerCloudHttpClient);
+            hetznerCloudMockedStatic.when(HetznerCloud::getInstance).thenReturn(hetznerCloud);
+            when(hetznerCloud.getListenerManager()).thenReturn(listenerManager);
+            when(hetznerCloud.getHttpDetails()).thenReturn(List.of("http://host/", "key1234"));
+            when(serviceManager.getActionService()).thenReturn(actionService);
+            when(actionService.waitForActionToComplete(any(Action.class))).thenReturn(CompletableFuture.completedFuture(action));
+
+            when(hetznerCloudHttpClient.sendHttpRequest(any(), anyString(), any(RequestVerb.class), anyString(), anyString())).thenReturn(new ActionWrapper(action));
+
+            ServerService serverService = new ServerService(serviceManager);
+            serverService.shutdownServer(new Server());
+
+            verify(hetznerCloudHttpClient, times(1)).sendHttpRequest(any(), anyString(), eq(RequestVerb.POST), eq("key1234"), eq(""));
+            verify(actionService, times(1)).waitForActionToComplete(any(Action.class));
+        }
+    }
+
+    @Test
+    @DisplayName("When httpclient throws, then shutdown Server also throws a Runtime exception")
+    void shutdownServerHandlesException() throws IOException, InterruptedException, IllegalAccessException {
+        HetznerCloud hetznerCloud = mock(HetznerCloud.class);
+        HetznerCloudHttpClient hetznerCloudHttpClient = mock(HetznerCloudHttpClient.class);
+        ListenerManager listenerManager = mock(ListenerManager.class);
+
+        try (MockedStatic<HetznerCloud> hetznerCloudMockedStatic = mockStatic(HetznerCloud.class);
+             MockedStatic<HetznerCloudHttpClient> hetznerCloudHttpClientMockedStatic = mockStatic(HetznerCloudHttpClient.class)) {
+
+            hetznerCloudHttpClientMockedStatic.when(HetznerCloudHttpClient::getInstance).thenReturn(hetznerCloudHttpClient);
+            hetznerCloudMockedStatic.when(HetznerCloud::getInstance).thenReturn(hetznerCloud);
+            when(hetznerCloud.getListenerManager()).thenReturn(listenerManager);
+            when(hetznerCloud.getHttpDetails()).thenReturn(List.of("http://host/", "key1234"));
+
+            when(hetznerCloudHttpClient.sendHttpRequest(any(), anyString(), any(RequestVerb.class), anyString(), anyString())).thenThrow(new IOException());
+
+            ServerService serverService = new ServerService();
+
+            RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> serverService.shutdownServer(new Server()));
+
+            verify(hetznerCloudHttpClient, times(1)).sendHttpRequest(any(), anyString(), eq(RequestVerb.POST), eq("key1234"), eq(""));
+
+            assertTrue(runtimeException.getMessage().contains("IOException"));
+        }
+    }
+
+    @Test
+    @DisplayName("When Shutdown Action returned from Hetzner is Null, server service throws a null pointer exception")
+    void whenShutdownActionReturnedFromHetznerIsNullServerServiceThrowsANullPointer() throws IOException, InterruptedException, IllegalAccessException {
+        HetznerCloud hetznerCloud = mock(HetznerCloud.class);
+        HetznerCloudHttpClient hetznerCloudHttpClient = mock(HetznerCloudHttpClient.class);
+        ListenerManager listenerManager = mock(ListenerManager.class);
+        ServiceManager serviceManager = mock(ServiceManager.class);
+        ActionService actionService = mock(ActionService.class);
+
+        try (MockedStatic<HetznerCloud> hetznerCloudMockedStatic = mockStatic(HetznerCloud.class);
+             MockedStatic<HetznerCloudHttpClient> hetznerCloudHttpClientMockedStatic = mockStatic(HetznerCloudHttpClient.class)) {
+
+            hetznerCloudHttpClientMockedStatic.when(HetznerCloudHttpClient::getInstance).thenReturn(hetznerCloudHttpClient);
+            hetznerCloudMockedStatic.when(HetznerCloud::getInstance).thenReturn(hetznerCloud);
+            when(hetznerCloud.getListenerManager()).thenReturn(listenerManager);
+            when(hetznerCloud.getHttpDetails()).thenReturn(List.of("http://host/", "key1234"));
+            when(serviceManager.getActionService()).thenReturn(actionService);
+
+            when(actionService.waitForActionToComplete(any(Action.class))).thenReturn(CompletableFuture.completedFuture(null));
+
+            when(hetznerCloudHttpClient.sendHttpRequest(any(), anyString(), any(RequestVerb.class), anyString(), anyString())).thenReturn(new ActionWrapper(new Action()));
+
+            ServerService serverService = new ServerService(serviceManager);
+
+            RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> serverService.shutdownServer(new Server()));
+
+            verify(hetznerCloudHttpClient, times(1)).sendHttpRequest(any(), anyString(), eq(RequestVerb.POST), eq("key1234"), eq(""));
+            verify(actionService, times(1)).waitForActionToComplete(any(Action.class));
+
+            assertTrue(runtimeException.getMessage().contains("NullPointerException"));
         }
     }
 
