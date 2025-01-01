@@ -107,7 +107,7 @@ public class ServerService {
         try {
             Action action = client.sendHttpRequest(ActionWrapper.class, httpUrl, DELETE, hostAndKey.get(1)).getAction();
             CompletableFuture<Action> completedActionFuture = serviceManager.getActionService().waitForActionToComplete(action).thenApplyAsync((completedAction) -> {
-                if (action == null) {
+                if (completedAction == null) {
                     throw new NullPointerException();
                 }
                 logger.info("Server confirmed deleted at {}", completedAction.getFinished());
