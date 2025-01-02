@@ -107,10 +107,17 @@ public class Server implements Serializable {
     }
 
     /**
-     * Sends a Shutdown signal to the server, which will instruct the OS to shut it down. Note that if you **must** ensure the server is completely offline, you should also call .powerOff() to ensure the 'plug is pulled'
+     * Sends a Shutdown signal to the server, which will instruct the OS to shut it down. Note that if you <b>must</b>> ensure the server is completely offline, you should also call .powerOff() to ensure the 'plug is pulled'
      */
     public void shutdown() {
         propertyChangeSupport.firePropertyChange("shutdown", null, null);
+    }
+
+    /**
+     * Sends a command to Power off the server. This is essentially <b>'pulling the plug'</b> and could be destructive if programs are still running on the server. <b>Only use if absolutely necessary</b>
+     */
+    public void powerOff() {
+        propertyChangeSupport.firePropertyChange("poweroff", null, null);
     }
 
 
