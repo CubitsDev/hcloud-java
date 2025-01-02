@@ -821,4 +821,68 @@ class ServerServiceTest {
             verify(actionService, times(1)).waitForActionToComplete(any(Action.class));
         }
     }
+
+    @Test
+    @DisplayName("Reboot Server calls Hetzner and tracks the action")
+    void RebootServerCallsHetznerAndTracksTheAction() throws IOException, InterruptedException, IllegalAccessException {
+        HetznerCloud hetznerCloud = mock(HetznerCloud.class);
+        HetznerCloudHttpClient hetznerCloudHttpClient = mock(HetznerCloudHttpClient.class);
+        ListenerManager listenerManager = mock(ListenerManager.class);
+        ServiceManager serviceManager = mock(ServiceManager.class);
+        ActionService actionService = mock(ActionService.class);
+
+        try (MockedStatic<HetznerCloud> hetznerCloudMockedStatic = mockStatic(HetznerCloud.class);
+             MockedStatic<HetznerCloudHttpClient> hetznerCloudHttpClientMockedStatic = mockStatic(HetznerCloudHttpClient.class)) {
+
+            Action action = new Action();
+            action.setFinished(Date.from(Instant.now()).toString());
+
+            hetznerCloudHttpClientMockedStatic.when(HetznerCloudHttpClient::getInstance).thenReturn(hetznerCloudHttpClient);
+            hetznerCloudMockedStatic.when(HetznerCloud::getInstance).thenReturn(hetznerCloud);
+            when(hetznerCloud.getListenerManager()).thenReturn(listenerManager);
+            when(hetznerCloud.getHttpDetails()).thenReturn(List.of("http://host/", "key1234"));
+            when(serviceManager.getActionService()).thenReturn(actionService);
+            when(actionService.waitForActionToComplete(any(Action.class))).thenReturn(CompletableFuture.completedFuture(action));
+
+            when(hetznerCloudHttpClient.sendHttpRequest(any(), anyString(), any(RequestVerb.class), anyString(), anyString())).thenReturn(new ActionWrapper(action));
+
+            ServerService serverService = new ServerService(serviceManager);
+            serverService.rebootServer(new Server());
+
+            verify(hetznerCloudHttpClient, times(1)).sendHttpRequest(any(), anyString(), eq(RequestVerb.POST), eq("key1234"), eq(""));
+            verify(actionService, times(1)).waitForActionToComplete(any(Action.class));
+        }
+    }
+
+    @Test
+    @DisplayName("Reset Server calls Hetzner and tracks the action")
+    void ResetServerCallsHetznerAndTracksTheAction() throws IOException, InterruptedException, IllegalAccessException {
+        HetznerCloud hetznerCloud = mock(HetznerCloud.class);
+        HetznerCloudHttpClient hetznerCloudHttpClient = mock(HetznerCloudHttpClient.class);
+        ListenerManager listenerManager = mock(ListenerManager.class);
+        ServiceManager serviceManager = mock(ServiceManager.class);
+        ActionService actionService = mock(ActionService.class);
+
+        try (MockedStatic<HetznerCloud> hetznerCloudMockedStatic = mockStatic(HetznerCloud.class);
+             MockedStatic<HetznerCloudHttpClient> hetznerCloudHttpClientMockedStatic = mockStatic(HetznerCloudHttpClient.class)) {
+
+            Action action = new Action();
+            action.setFinished(Date.from(Instant.now()).toString());
+
+            hetznerCloudHttpClientMockedStatic.when(HetznerCloudHttpClient::getInstance).thenReturn(hetznerCloudHttpClient);
+            hetznerCloudMockedStatic.when(HetznerCloud::getInstance).thenReturn(hetznerCloud);
+            when(hetznerCloud.getListenerManager()).thenReturn(listenerManager);
+            when(hetznerCloud.getHttpDetails()).thenReturn(List.of("http://host/", "key1234"));
+            when(serviceManager.getActionService()).thenReturn(actionService);
+            when(actionService.waitForActionToComplete(any(Action.class))).thenReturn(CompletableFuture.completedFuture(action));
+
+            when(hetznerCloudHttpClient.sendHttpRequest(any(), anyString(), any(RequestVerb.class), anyString(), anyString())).thenReturn(new ActionWrapper(action));
+
+            ServerService serverService = new ServerService(serviceManager);
+            serverService.resetServer(new Server());
+
+            verify(hetznerCloudHttpClient, times(1)).sendHttpRequest(any(), anyString(), eq(RequestVerb.POST), eq("key1234"), eq(""));
+            verify(actionService, times(1)).waitForActionToComplete(any(Action.class));
+        }
+    }
 }

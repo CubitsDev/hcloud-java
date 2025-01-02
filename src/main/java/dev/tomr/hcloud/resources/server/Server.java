@@ -107,7 +107,8 @@ public class Server implements Serializable {
     }
 
     /**
-     * Sends a Shutdown signal to the server, which will instruct the OS to shut it down. Note that if you <b>must</b>> ensure the server is completely offline, you should also call .powerOff() to ensure the 'plug is pulled'
+     * Sends a Shutdown request to the server by sending an ACPI request, which will instruct the OS to shut it down. Note that if you <b>must</b>> ensure the server is completely offline, you should also call .powerOff() to ensure the 'plug is pulled'.
+     * The server OS must support ACPI
      */
     public void shutdown() {
         propertyChangeSupport.firePropertyChange("shutdown", null, null);
@@ -121,12 +122,25 @@ public class Server implements Serializable {
     }
 
     /**
-     * Starts the Server by turning it's power on
+     * Starts the Server by turning its power on
      */
     public void powerOn() {
         propertyChangeSupport.firePropertyChange("poweron", null, null);
     }
 
+    /**
+     * Sends a reboot request to the server by sending an ACPI request. The server OS must support ACPI
+     */
+    public void reboot() {
+        propertyChangeSupport.firePropertyChange("reboot", null, null);
+    }
+
+    /**
+     * Cuts power to the server and starts it again. Forcefully stops the server without giving the OS time to shut down. Should only be used if reboot does not work.
+     */
+    public void reset() {
+        propertyChangeSupport.firePropertyChange("reset", null, null);
+    }
 
     // These are the current setters that will send an API request (PUT /servers) when actions begin to be added, they will also likely be triggered by setters
 

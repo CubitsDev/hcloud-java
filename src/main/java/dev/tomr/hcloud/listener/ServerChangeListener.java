@@ -39,6 +39,15 @@ public class ServerChangeListener implements PropertyChangeListener {
                 logger.info("Server power on has been called. Instructing Hetzner to power up the server");
                 HetznerCloud.getInstance().getServiceManager().getServerService().powerOnServer(server);
             }
+            case "reboot" -> {
+                logger.info("Server reboot has been called. Instructing Hetzner to reboot the server");
+                HetznerCloud.getInstance().getServiceManager().getServerService().rebootServer(server);
+            }
+            case "reset" -> {
+                logger.info("Server reset has been called. Instructing Hetzner to reset the server");
+                logger.warn("This is a potentially destructive action!");
+                HetznerCloud.getInstance().getServiceManager().getServerService().resetServer(server);
+            }
             default -> {
                 logger.info("Server changed: {}", evt.getPropertyName());
                 logger.info("Server: {} -> {}", evt.getOldValue(), evt.getNewValue());

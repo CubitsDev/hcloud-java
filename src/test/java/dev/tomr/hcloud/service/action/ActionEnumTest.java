@@ -18,4 +18,16 @@ public class ActionEnumTest {
     void poweroff() {
         assertEquals("poweroff", Action.POWEROFF.path);
     }
+
+    @Test
+    @DisplayName("POWERON enum returns 'poweron' for the path")
+    void poweron() {
+        assertEquals("poweron", Action.POWERON.path);
+    }
+
+    @Test
+    @DisplayName("REBOOT enum returns 'reboot' for the path")
+    void reboot() {
+        assertEquals("reboot", Action.REBOOT.path);
+    }
 }

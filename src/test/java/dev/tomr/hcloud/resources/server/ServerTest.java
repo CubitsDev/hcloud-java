@@ -193,7 +193,6 @@ class ServerTest {
             assertNull(captor.getValue().getOldValue());
             assertEquals("test", captor.getValue().getNewValue());
         }
-
     }
 
     @Test
@@ -219,7 +218,6 @@ class ServerTest {
             verify(serverChangeListener, times(1)).propertyChange(captor.capture());
             assertEquals("delete", captor.getValue().getPropertyName());
         }
-
     }
 
     @Test
@@ -245,7 +243,6 @@ class ServerTest {
             verify(serverChangeListener, times(1)).propertyChange(captor.capture());
             assertEquals("shutdown", captor.getValue().getPropertyName());
         }
-
     }
 
     @Test
@@ -271,7 +268,6 @@ class ServerTest {
             verify(serverChangeListener, times(1)).propertyChange(captor.capture());
             assertEquals("poweroff", captor.getValue().getPropertyName());
         }
-
     }
 
     @Test
@@ -297,6 +293,55 @@ class ServerTest {
             verify(serverChangeListener, times(1)).propertyChange(captor.capture());
             assertEquals("poweron", captor.getValue().getPropertyName());
         }
-
     }
+    @Test
+    @DisplayName("calling reboot sends an event to the ServerChangeListener")
+    void callingRebootSendsAnEventToTheServerChangeListener() {
+        try (MockedStatic<HetznerCloud> hetznerCloud = mockStatic(HetznerCloud.class)) {
+            HetznerCloud hetznerCloudMock = mock(HetznerCloud.class);
+            ServerChangeListener scl = new ServerChangeListener();
+            ServerChangeListener serverChangeListener = spy(scl);
+            ListenerManager listenerManager = mock(ListenerManager.class);
+            ServiceManager serviceManager = mock(ServiceManager.class);
+            ServerService serverService = mock(ServerService.class);
+            ArgumentCaptor<PropertyChangeEvent> captor = ArgumentCaptor.forClass(PropertyChangeEvent.class);
+
+            hetznerCloud.when(HetznerCloud::getInstance).thenReturn(hetznerCloudMock);
+            when(hetznerCloudMock.getListenerManager()).thenReturn(listenerManager);
+            when(hetznerCloudMock.getServiceManager()).thenReturn(serviceManager);
+            when(listenerManager.getServerChangeListener()).thenReturn(serverChangeListener);
+            when(serviceManager.getServerService()).thenReturn(serverService);
+
+            Server server = new Server();
+            server.reboot();
+            verify(serverChangeListener, times(1)).propertyChange(captor.capture());
+            assertEquals("reboot", captor.getValue().getPropertyName());
+        }
+    }
+
+    @Test
+    @DisplayName("calling reset sends an event to the ServerChangeListener")
+    void callingResetSendsAnEventToTheServerChangeListener() {
+        try (MockedStatic<HetznerCloud> hetznerCloud = mockStatic(HetznerCloud.class)) {
+            HetznerCloud hetznerCloudMock = mock(HetznerCloud.class);
+            ServerChangeListener scl = new ServerChangeListener();
+            ServerChangeListener serverChangeListener = spy(scl);
+            ListenerManager listenerManager = mock(ListenerManager.class);
+            ServiceManager serviceManager = mock(ServiceManager.class);
+            ServerService serverService = mock(ServerService.class);
+            ArgumentCaptor<PropertyChangeEvent> captor = ArgumentCaptor.forClass(PropertyChangeEvent.class);
+
+            hetznerCloud.when(HetznerCloud::getInstance).thenReturn(hetznerCloudMock);
+            when(hetznerCloudMock.getListenerManager()).thenReturn(listenerManager);
+            when(hetznerCloudMock.getServiceManager()).thenReturn(serviceManager);
+            when(listenerManager.getServerChangeListener()).thenReturn(serverChangeListener);
+            when(serviceManager.getServerService()).thenReturn(serverService);
+
+            Server server = new Server();
+            server.reset();
+            verify(serverChangeListener, times(1)).propertyChange(captor.capture());
+            assertEquals("reset", captor.getValue().getPropertyName());
+        }
+    }
+
 }
