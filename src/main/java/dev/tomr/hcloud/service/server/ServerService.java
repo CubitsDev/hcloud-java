@@ -25,6 +25,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static dev.tomr.hcloud.http.RequestVerb.*;
+import static dev.tomr.hcloud.service.action.Action.POWEROFF;
+import static dev.tomr.hcloud.service.action.Action.SHUTDOWN;
 
 public class ServerService {
     protected static final Logger logger = LogManager.getLogger();
@@ -127,8 +129,16 @@ public class ServerService {
     }
 
     public void shutdownServer(Server server) {
+        sendServerAction(server, SHUTDOWN);
+    }
+
+    public void powerOffServer(Server server) {
+        sendServerAction(server, POWEROFF);
+    }
+
+    private void sendServerAction(Server server, dev.tomr.hcloud.service.action.Action givenAction) {
         List<String> hostAndKey = HetznerCloud.getInstance().getHttpDetails();
-        String httpUrl = String.format("%sservers/%d/actions/poweroff", hostAndKey.get(0), server.getId());
+        String httpUrl = String.format("%sservers/%d/actions/%s", hostAndKey.get(0), server.getId(), givenAction.path);
         AtomicReference<String> exceptionMsg = new AtomicReference<>();
         try {
             Action action = client.sendHttpRequest(ActionWrapper.class, httpUrl, POST, hostAndKey.get(1), "").getAction();
@@ -136,10 +146,10 @@ public class ServerService {
                 if (completedAction == null) {
                     throw new NullPointerException();
                 }
-                logger.info("Server shutdown at {}", completedAction.getFinished());
+                logger.info("Server {} at {}", givenAction.toString(), completedAction.getFinished());
                 return completedAction;
             }).exceptionally((e) -> {
-                logger.error("Server shutdown failed");
+                logger.error("Server {} failed", givenAction.toString());
                 logger.error(e.getMessage());
                 exceptionMsg.set(e.getMessage());
                 return null;
@@ -148,7 +158,7 @@ public class ServerService {
                 throw new RuntimeException(exceptionMsg.get());
             }
         } catch (Exception e) {
-            logger.error("Failed to shutdown the Server");
+            logger.error("Failed to {} the Server", givenAction.toString());
             throw new RuntimeException(e);
         }
     }
