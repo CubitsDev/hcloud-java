@@ -120,6 +120,13 @@ public class Server implements Serializable {
         propertyChangeSupport.firePropertyChange("poweroff", null, null);
     }
 
+    /**
+     * Starts the Server by turning it's power on
+     */
+    public void powerOn() {
+        propertyChangeSupport.firePropertyChange("poweron", null, null);
+    }
+
 
     // These are the current setters that will send an API request (PUT /servers) when actions begin to be added, they will also likely be triggered by setters
 

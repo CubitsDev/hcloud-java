@@ -25,8 +25,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static dev.tomr.hcloud.http.RequestVerb.*;
-import static dev.tomr.hcloud.service.action.Action.POWEROFF;
-import static dev.tomr.hcloud.service.action.Action.SHUTDOWN;
+import static dev.tomr.hcloud.service.action.Action.*;
 
 public class ServerService {
     protected static final Logger logger = LogManager.getLogger();
@@ -134,6 +133,10 @@ public class ServerService {
 
     public void powerOffServer(Server server) {
         sendServerAction(server, POWEROFF);
+    }
+
+    public void powerOnServer(Server server) {
+        sendServerAction(server, POWERON);
     }
 
     private void sendServerAction(Server server, dev.tomr.hcloud.service.action.Action givenAction) {
