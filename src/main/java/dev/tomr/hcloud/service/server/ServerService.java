@@ -139,6 +139,14 @@ public class ServerService {
         sendServerAction(server, POWERON);
     }
 
+    public void rebootServer(Server server) {
+        sendServerAction(server, REBOOT);
+    }
+
+    public void resetServer(Server server) {
+        sendServerAction(server, RESET);
+    }
+
     private void sendServerAction(Server server, dev.tomr.hcloud.service.action.Action givenAction) {
         List<String> hostAndKey = HetznerCloud.getInstance().getHttpDetails();
         String httpUrl = String.format("%sservers/%d/actions/%s", hostAndKey.get(0), server.getId(), givenAction.path);
