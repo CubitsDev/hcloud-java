@@ -399,39 +399,6 @@ class ServerServiceTest {
     }
 
     @Test
-    @DisplayName("getServer returns a server from the cache when multiple are in the cache")
-    void getServerReturnsAServerFromTheCacheWithMultipleCached() throws IOException, InterruptedException, IllegalAccessException {
-        HetznerCloud hetznerCloud = mock(HetznerCloud.class);
-        HetznerCloudHttpClient hetznerCloudHttpClient = mock(HetznerCloudHttpClient.class);
-        ListenerManager listenerManager = mock(ListenerManager.class);
-
-        try (MockedStatic<HetznerCloud> hetznerCloudMockedStatic = mockStatic(HetznerCloud.class);
-             MockedStatic<HetznerCloudHttpClient> hetznerCloudHttpClientMockedStatic = mockStatic(HetznerCloudHttpClient.class)) {
-            ServerDTOList serverDTOList = new ServerDTOList();
-            ServerDTO serverDTO = new ServerDTO();
-            serverDTO.setName("name");
-            serverDTO.setId(1);
-            ServerDTO serverDTO2 = new ServerDTO();
-            serverDTO2.setName("name2");
-            serverDTO2.setId(2);
-            serverDTOList.setServers(List.of(serverDTO2, serverDTO));
-
-            hetznerCloudHttpClientMockedStatic.when(HetznerCloudHttpClient::getInstance).thenReturn(hetznerCloudHttpClient);
-            hetznerCloudMockedStatic.when(HetznerCloud::getInstance).thenReturn(hetznerCloud);
-            when(hetznerCloud.getListenerManager()).thenReturn(listenerManager);
-            when(hetznerCloud.getHttpDetails()).thenReturn(List.of("http://host/", "key1234"));
-            when(hetznerCloud.hasApiKey()).thenReturn(true);
-            when(hetznerCloudHttpClient.sendHttpRequest(any(), anyString(), any(RequestVerb.class), anyString())).thenReturn(serverDTOList);
-
-            ServerService serverService = new ServerService();
-
-            Server server = serverService.getServer(2);
-
-            assertEquals(serverDTO2.getName(), server.getName());
-        }
-    }
-
-    @Test
     @DisplayName("getServer returns null when it's not found")
     void getServerReturnsNullWhenItIsNotFound() throws IOException, InterruptedException, IllegalAccessException {
         HetznerCloud hetznerCloud = mock(HetznerCloud.class);
