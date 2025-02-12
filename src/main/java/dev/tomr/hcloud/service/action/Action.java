@@ -5,7 +5,8 @@ public enum Action {
     POWEROFF("poweroff"),
     POWERON("poweron"),
     REBOOT("reboot"),
-    RESET("reset"),;
+    RESET("reset"),
+    ADD_PLACEMENT_GROUP("add_to_placement_group");
 
     public final String path;
 

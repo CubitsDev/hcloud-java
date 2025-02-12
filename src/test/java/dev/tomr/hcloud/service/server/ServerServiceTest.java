@@ -1,5 +1,8 @@
 package dev.tomr.hcloud.service.server;
 
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import dev.tomr.hcloud.HetznerCloud;
 import dev.tomr.hcloud.http.HetznerCloudHttpClient;
 import dev.tomr.hcloud.http.RequestVerb;
@@ -12,6 +15,7 @@ import dev.tomr.hcloud.resources.common.*;
 import dev.tomr.hcloud.resources.server.Server;
 import dev.tomr.hcloud.service.ServiceManager;
 import dev.tomr.hcloud.service.action.ActionService;
+import dev.tomr.hcloud.service.action.model.PlacementGroupBody;
 import org.junit.jupiter.api.*;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -587,6 +591,7 @@ class ServerServiceTest {
 
             hetznerCloudHttpClientMockedStatic.when(HetznerCloudHttpClient::getInstance).thenReturn(hetznerCloudHttpClient);
             hetznerCloudMockedStatic.when(HetznerCloud::getInstance).thenReturn(hetznerCloud);
+            hetznerCloudMockedStatic.when(HetznerCloud::getObjectMapper).thenReturn(JsonMapper.builder().configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true).build());
             when(hetznerCloud.getListenerManager()).thenReturn(listenerManager);
             when(hetznerCloud.getHttpDetails()).thenReturn(List.of("http://host/", "key1234"));
             when(serviceManager.getActionService()).thenReturn(actionService);
@@ -618,6 +623,7 @@ class ServerServiceTest {
 
             hetznerCloudHttpClientMockedStatic.when(HetznerCloudHttpClient::getInstance).thenReturn(hetznerCloudHttpClient);
             hetznerCloudMockedStatic.when(HetznerCloud::getInstance).thenReturn(hetznerCloud);
+            hetznerCloudMockedStatic.when(HetznerCloud::getObjectMapper).thenReturn(JsonMapper.builder().configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true).build());
             when(hetznerCloud.getListenerManager()).thenReturn(listenerManager);
             when(hetznerCloud.getHttpDetails()).thenReturn(List.of("http://host/", "key1234"));
 
@@ -650,6 +656,7 @@ class ServerServiceTest {
 
             hetznerCloudHttpClientMockedStatic.when(HetznerCloudHttpClient::getInstance).thenReturn(hetznerCloudHttpClient);
             hetznerCloudMockedStatic.when(HetznerCloud::getInstance).thenReturn(hetznerCloud);
+            hetznerCloudMockedStatic.when(HetznerCloud::getObjectMapper).thenReturn(JsonMapper.builder().configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true).build());
             when(hetznerCloud.getListenerManager()).thenReturn(listenerManager);
             when(hetznerCloud.getHttpDetails()).thenReturn(List.of("http://host/", "key1234"));
             when(serviceManager.getActionService()).thenReturn(actionService);
@@ -677,6 +684,7 @@ class ServerServiceTest {
 
             hetznerCloudHttpClientMockedStatic.when(HetznerCloudHttpClient::getInstance).thenReturn(hetznerCloudHttpClient);
             hetznerCloudMockedStatic.when(HetznerCloud::getInstance).thenReturn(hetznerCloud);
+            hetznerCloudMockedStatic.when(HetznerCloud::getObjectMapper).thenReturn(JsonMapper.builder().configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true).build());
             when(hetznerCloud.getListenerManager()).thenReturn(listenerManager);
             when(hetznerCloud.getHttpDetails()).thenReturn(List.of("http://host/", "key1234"));
 
@@ -706,6 +714,7 @@ class ServerServiceTest {
 
             hetznerCloudHttpClientMockedStatic.when(HetznerCloudHttpClient::getInstance).thenReturn(hetznerCloudHttpClient);
             hetznerCloudMockedStatic.when(HetznerCloud::getInstance).thenReturn(hetznerCloud);
+            hetznerCloudMockedStatic.when(HetznerCloud::getObjectMapper).thenReturn(JsonMapper.builder().configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true).build());
             when(hetznerCloud.getListenerManager()).thenReturn(listenerManager);
             when(hetznerCloud.getHttpDetails()).thenReturn(List.of("http://host/", "key1234"));
             when(serviceManager.getActionService()).thenReturn(actionService);
@@ -742,6 +751,7 @@ class ServerServiceTest {
 
             hetznerCloudHttpClientMockedStatic.when(HetznerCloudHttpClient::getInstance).thenReturn(hetznerCloudHttpClient);
             hetznerCloudMockedStatic.when(HetznerCloud::getInstance).thenReturn(hetznerCloud);
+            hetznerCloudMockedStatic.when(HetznerCloud::getObjectMapper).thenReturn(JsonMapper.builder().configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true).build());
             when(hetznerCloud.getListenerManager()).thenReturn(listenerManager);
             when(hetznerCloud.getHttpDetails()).thenReturn(List.of("http://host/", "key1234"));
             when(serviceManager.getActionService()).thenReturn(actionService);
@@ -774,6 +784,7 @@ class ServerServiceTest {
 
             hetznerCloudHttpClientMockedStatic.when(HetznerCloudHttpClient::getInstance).thenReturn(hetznerCloudHttpClient);
             hetznerCloudMockedStatic.when(HetznerCloud::getInstance).thenReturn(hetznerCloud);
+            hetznerCloudMockedStatic.when(HetznerCloud::getObjectMapper).thenReturn(JsonMapper.builder().configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true).build());
             when(hetznerCloud.getListenerManager()).thenReturn(listenerManager);
             when(hetznerCloud.getHttpDetails()).thenReturn(List.of("http://host/", "key1234"));
             when(serviceManager.getActionService()).thenReturn(actionService);
@@ -806,6 +817,7 @@ class ServerServiceTest {
 
             hetznerCloudHttpClientMockedStatic.when(HetznerCloudHttpClient::getInstance).thenReturn(hetznerCloudHttpClient);
             hetznerCloudMockedStatic.when(HetznerCloud::getInstance).thenReturn(hetznerCloud);
+            hetznerCloudMockedStatic.when(HetznerCloud::getObjectMapper).thenReturn(JsonMapper.builder().configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true).build());
             when(hetznerCloud.getListenerManager()).thenReturn(listenerManager);
             when(hetznerCloud.getHttpDetails()).thenReturn(List.of("http://host/", "key1234"));
             when(serviceManager.getActionService()).thenReturn(actionService);
@@ -837,6 +849,7 @@ class ServerServiceTest {
             action.setFinished(Date.from(Instant.now()).toString());
 
             hetznerCloudHttpClientMockedStatic.when(HetznerCloudHttpClient::getInstance).thenReturn(hetznerCloudHttpClient);
+            hetznerCloudMockedStatic.when(HetznerCloud::getObjectMapper).thenReturn(JsonMapper.builder().configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true).build());
             hetznerCloudMockedStatic.when(HetznerCloud::getInstance).thenReturn(hetznerCloud);
             when(hetznerCloud.getListenerManager()).thenReturn(listenerManager);
             when(hetznerCloud.getHttpDetails()).thenReturn(List.of("http://host/", "key1234"));
@@ -849,6 +862,39 @@ class ServerServiceTest {
             serverService.resetServer(new Server());
 
             verify(hetznerCloudHttpClient, times(1)).sendHttpRequest(any(), anyString(), eq(RequestVerb.POST), eq("key1234"), eq(""));
+            verify(actionService, times(1)).waitForActionToComplete(any(Action.class));
+        }
+    }
+
+    @Test
+    @DisplayName("Add Server to Placement Group calls Hetzner and tracks the action")
+    void addServerToPlacementGroupCallsHetznerAndTracksTheAction() throws IOException, InterruptedException, IllegalAccessException {
+        HetznerCloud hetznerCloud = mock(HetznerCloud.class);
+        HetznerCloudHttpClient hetznerCloudHttpClient = mock(HetznerCloudHttpClient.class);
+        ListenerManager listenerManager = mock(ListenerManager.class);
+        ServiceManager serviceManager = mock(ServiceManager.class);
+        ActionService actionService = mock(ActionService.class);
+
+        try (MockedStatic<HetznerCloud> hetznerCloudMockedStatic = mockStatic(HetznerCloud.class);
+             MockedStatic<HetznerCloudHttpClient> hetznerCloudHttpClientMockedStatic = mockStatic(HetznerCloudHttpClient.class)) {
+
+            Action action = new Action();
+            action.setFinished(Date.from(Instant.now()).toString());
+
+            hetznerCloudHttpClientMockedStatic.when(HetznerCloudHttpClient::getInstance).thenReturn(hetznerCloudHttpClient);
+            hetznerCloudMockedStatic.when(HetznerCloud::getObjectMapper).thenReturn(JsonMapper.builder().configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true).build());
+            hetznerCloudMockedStatic.when(HetznerCloud::getInstance).thenReturn(hetznerCloud);
+            when(hetznerCloud.getListenerManager()).thenReturn(listenerManager);
+            when(hetznerCloud.getHttpDetails()).thenReturn(List.of("http://host/", "key1234"));
+            when(serviceManager.getActionService()).thenReturn(actionService);
+            when(actionService.waitForActionToComplete(any(Action.class))).thenReturn(CompletableFuture.completedFuture(action));
+
+            when(hetznerCloudHttpClient.sendHttpRequest(any(), anyString(), any(RequestVerb.class), anyString(), anyString())).thenReturn(new ActionWrapper(action));
+
+            ServerService serverService = new ServerService(serviceManager);
+            serverService.addServerToPlacementGroup(new Server(), 1);
+
+            verify(hetznerCloudHttpClient, times(1)).sendHttpRequest(any(), anyString(), eq(RequestVerb.POST), eq("key1234"), eq(new ObjectMapper().writeValueAsString(new PlacementGroupBody(1))));
             verify(actionService, times(1)).waitForActionToComplete(any(Action.class));
         }
     }
