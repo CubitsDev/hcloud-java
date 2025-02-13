@@ -29,4 +29,12 @@ public class Protection{
     public void setRebuild(boolean rebuild) {
         this.rebuild = rebuild;
     }
+
+    @Override
+    public String toString() {
+        return "Protection{" +
+                "delete=" + delete +
+                ", rebuild=" + rebuild +
+                '}';
+    }
 }

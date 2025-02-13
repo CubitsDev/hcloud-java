@@ -143,14 +143,26 @@ public class Server implements Serializable {
     }
 
     /**
-     *
+     * Adds the server to a given placement group
+     * @param placementGroup The Placement group to add the server to
      */
     public void addToPlacementGroup(PlacementGroup placementGroup) {
         propertyChangeSupport.firePropertyChange("addToPlacementGroup", null, placementGroup.getId());
     }
 
+    /**
+     * Removes the server from any placement groups it may be in
+     */
     public void removeFromPlacementGroup() {
         propertyChangeSupport.firePropertyChange("removeFromPlacementGroup", null, null);
+    }
+
+    /**
+     * Updates the Protection of a Server
+     * @param protection The protection values to be applied
+     */
+    public void changeServerProtection(Protection protection) {
+        propertyChangeSupport.firePropertyChange("changeServerProtection", null, protection);
     }
 
     // These are the current setters that will send an API request (PUT /servers) when actions begin to be added, they will also likely be triggered by setters

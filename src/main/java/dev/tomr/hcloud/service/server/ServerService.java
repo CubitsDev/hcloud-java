@@ -8,8 +8,10 @@ import dev.tomr.hcloud.http.model.Action;
 import dev.tomr.hcloud.http.model.ActionWrapper;
 import dev.tomr.hcloud.http.model.ServerDTO;
 import dev.tomr.hcloud.http.model.ServerDTOList;
+import dev.tomr.hcloud.resources.common.Protection;
 import dev.tomr.hcloud.resources.server.Server;
 import dev.tomr.hcloud.service.ServiceManager;
+import dev.tomr.hcloud.service.action.model.ChangeProtectionBody;
 import dev.tomr.hcloud.service.action.model.PlacementGroupBody;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -152,6 +154,10 @@ public class ServerService {
 
     public void removeServerFromPlacementGroup(Server server) {
         sendServerAction(server, REMOVE_PLACEMENT_GROUP);
+    }
+
+    public void changeServerProtection(Server server, Protection protection) {
+        sendServerAction(server, CHANGE_SERVER_PROTECTION, new ChangeProtectionBody(protection.isDelete(), protection.isRebuild()));
     }
 
     private void sendServerAction(Server server, dev.tomr.hcloud.service.action.Action givenAction, HetznerJsonObject body) {
