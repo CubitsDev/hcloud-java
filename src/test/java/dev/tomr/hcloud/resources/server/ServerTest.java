@@ -344,4 +344,79 @@ class ServerTest {
         }
     }
 
+    @Test
+    @DisplayName("calling addServerToPlacementGroup sends an event to the ServerChangeListener")
+    void callingAddServerToPlacementGroupSendsAnEventToTheServerChangeListener() {
+        try (MockedStatic<HetznerCloud> hetznerCloud = mockStatic(HetznerCloud.class)) {
+            HetznerCloud hetznerCloudMock = mock(HetznerCloud.class);
+            ServerChangeListener scl = new ServerChangeListener();
+            ServerChangeListener serverChangeListener = spy(scl);
+            ListenerManager listenerManager = mock(ListenerManager.class);
+            ServiceManager serviceManager = mock(ServiceManager.class);
+            ServerService serverService = mock(ServerService.class);
+            ArgumentCaptor<PropertyChangeEvent> captor = ArgumentCaptor.forClass(PropertyChangeEvent.class);
+
+            hetznerCloud.when(HetznerCloud::getInstance).thenReturn(hetznerCloudMock);
+            when(hetznerCloudMock.getListenerManager()).thenReturn(listenerManager);
+            when(hetznerCloudMock.getServiceManager()).thenReturn(serviceManager);
+            when(listenerManager.getServerChangeListener()).thenReturn(serverChangeListener);
+            when(serviceManager.getServerService()).thenReturn(serverService);
+
+            Server server = new Server();
+            server.addToPlacementGroup(new PlacementGroup());
+            verify(serverChangeListener, times(1)).propertyChange(captor.capture());
+            assertEquals("addToPlacementGroup", captor.getValue().getPropertyName());
+        }
+    }
+
+    @Test
+    @DisplayName("calling removeServerFromPlacementGroup sends an event to the ServerChangeListener")
+    void callingRemoveServerFromPlacementGroupSendsAnEventToTheServerChangeListener() {
+        try (MockedStatic<HetznerCloud> hetznerCloud = mockStatic(HetznerCloud.class)) {
+            HetznerCloud hetznerCloudMock = mock(HetznerCloud.class);
+            ServerChangeListener scl = new ServerChangeListener();
+            ServerChangeListener serverChangeListener = spy(scl);
+            ListenerManager listenerManager = mock(ListenerManager.class);
+            ServiceManager serviceManager = mock(ServiceManager.class);
+            ServerService serverService = mock(ServerService.class);
+            ArgumentCaptor<PropertyChangeEvent> captor = ArgumentCaptor.forClass(PropertyChangeEvent.class);
+
+            hetznerCloud.when(HetznerCloud::getInstance).thenReturn(hetznerCloudMock);
+            when(hetznerCloudMock.getListenerManager()).thenReturn(listenerManager);
+            when(hetznerCloudMock.getServiceManager()).thenReturn(serviceManager);
+            when(listenerManager.getServerChangeListener()).thenReturn(serverChangeListener);
+            when(serviceManager.getServerService()).thenReturn(serverService);
+
+            Server server = new Server();
+            server.removeFromPlacementGroup();
+            verify(serverChangeListener, times(1)).propertyChange(captor.capture());
+            assertEquals("removeFromPlacementGroup", captor.getValue().getPropertyName());
+        }
+    }
+
+    @Test
+    @DisplayName("calling changeServerProtection sends an event to the ServerChangeListener")
+    void callingChangeServerProtectionSendsAnEventToTheServerChangeListener() {
+        try (MockedStatic<HetznerCloud> hetznerCloud = mockStatic(HetznerCloud.class)) {
+            HetznerCloud hetznerCloudMock = mock(HetznerCloud.class);
+            ServerChangeListener scl = new ServerChangeListener();
+            ServerChangeListener serverChangeListener = spy(scl);
+            ListenerManager listenerManager = mock(ListenerManager.class);
+            ServiceManager serviceManager = mock(ServiceManager.class);
+            ServerService serverService = mock(ServerService.class);
+            ArgumentCaptor<PropertyChangeEvent> captor = ArgumentCaptor.forClass(PropertyChangeEvent.class);
+
+            hetznerCloud.when(HetznerCloud::getInstance).thenReturn(hetznerCloudMock);
+            when(hetznerCloudMock.getListenerManager()).thenReturn(listenerManager);
+            when(hetznerCloudMock.getServiceManager()).thenReturn(serviceManager);
+            when(listenerManager.getServerChangeListener()).thenReturn(serverChangeListener);
+            when(serviceManager.getServerService()).thenReturn(serverService);
+
+            Server server = new Server();
+            server.changeServerProtection(new Protection(false, false));
+            verify(serverChangeListener, times(1)).propertyChange(captor.capture());
+            assertEquals("changeServerProtection", captor.getValue().getPropertyName());
+        }
+    }
+
 }

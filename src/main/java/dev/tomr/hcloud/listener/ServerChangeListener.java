@@ -1,6 +1,7 @@
 package dev.tomr.hcloud.listener;
 
 import dev.tomr.hcloud.HetznerCloud;
+import dev.tomr.hcloud.resources.common.Protection;
 import dev.tomr.hcloud.resources.server.Server;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -47,6 +48,18 @@ public class ServerChangeListener implements PropertyChangeListener {
                 logger.info("Server reset has been called. Instructing Hetzner to reset the server");
                 logger.warn("This is a potentially destructive action!");
                 HetznerCloud.getInstance().getServiceManager().getServerService().resetServer(server);
+            }
+            case "addToPlacementGroup" -> {
+                logger.info("Add Server to placement group has been called. Instructing Hetzner to add the server to the given placement group {}", evt.getNewValue());
+                HetznerCloud.getInstance().getServiceManager().getServerService().addServerToPlacementGroup(server, (Integer) evt.getNewValue());
+            }
+            case "removeFromPlacementGroup" -> {
+                logger.info("Remove Server from placement group has been called. Instructing Hetzner to remove the server from a placement group");
+                HetznerCloud.getInstance().getServiceManager().getServerService().removeServerFromPlacementGroup(server);
+            }
+            case "changeServerProtection" -> {
+                logger.info("Change Server protection has been called. Instructin Hetzner to update the server protection to {}", evt.getNewValue().toString());
+                HetznerCloud.getInstance().getServiceManager().getServerService().changeServerProtection(server, (Protection) evt.getNewValue());
             }
             default -> {
                 logger.info("Server changed: {}", evt.getPropertyName());

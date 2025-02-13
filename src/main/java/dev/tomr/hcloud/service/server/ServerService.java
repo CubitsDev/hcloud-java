@@ -2,23 +2,24 @@ package dev.tomr.hcloud.service.server;
 
 import dev.tomr.hcloud.HetznerCloud;
 import dev.tomr.hcloud.http.HetznerCloudHttpClient;
+import dev.tomr.hcloud.http.HetznerJsonObject;
 import dev.tomr.hcloud.http.converter.ServerConverterUtil;
 import dev.tomr.hcloud.http.model.Action;
 import dev.tomr.hcloud.http.model.ActionWrapper;
 import dev.tomr.hcloud.http.model.ServerDTO;
 import dev.tomr.hcloud.http.model.ServerDTOList;
+import dev.tomr.hcloud.resources.common.Protection;
 import dev.tomr.hcloud.resources.server.Server;
 import dev.tomr.hcloud.service.ServiceManager;
+import dev.tomr.hcloud.service.action.model.ChangeProtectionBody;
+import dev.tomr.hcloud.service.action.model.PlacementGroupBody;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -147,12 +148,24 @@ public class ServerService {
         sendServerAction(server, RESET);
     }
 
-    private void sendServerAction(Server server, dev.tomr.hcloud.service.action.Action givenAction) {
+    public void addServerToPlacementGroup(Server server, Integer serverId) {
+        sendServerAction(server, ADD_PLACEMENT_GROUP, new PlacementGroupBody(serverId));
+    }
+
+    public void removeServerFromPlacementGroup(Server server) {
+        sendServerAction(server, REMOVE_PLACEMENT_GROUP);
+    }
+
+    public void changeServerProtection(Server server, Protection protection) {
+        sendServerAction(server, CHANGE_SERVER_PROTECTION, new ChangeProtectionBody(protection.isDelete(), protection.isRebuild()));
+    }
+
+    private void sendServerAction(Server server, dev.tomr.hcloud.service.action.Action givenAction, HetznerJsonObject body) {
         List<String> hostAndKey = HetznerCloud.getInstance().getHttpDetails();
         String httpUrl = String.format("%sservers/%d/actions/%s", hostAndKey.get(0), server.getId(), givenAction.path);
         AtomicReference<String> exceptionMsg = new AtomicReference<>();
         try {
-            Action action = client.sendHttpRequest(ActionWrapper.class, httpUrl, POST, hostAndKey.get(1), "").getAction();
+            Action action = client.sendHttpRequest(ActionWrapper.class, httpUrl, POST, hostAndKey.get(1), body != null ? HetznerCloud.getObjectMapper().writeValueAsString(body) : "").getAction();
             CompletableFuture<Action> completedActionFuture = serviceManager.getActionService().waitForActionToComplete(action).thenApplyAsync((completedAction) -> {
                 if (completedAction == null) {
                     throw new NullPointerException();
@@ -172,6 +185,10 @@ public class ServerService {
             logger.error("Failed to {} the Server", givenAction.toString());
             throw new RuntimeException(e);
         }
+    }
+
+    private void sendServerAction(Server server, dev.tomr.hcloud.service.action.Action givenAction) {
+        sendServerAction(server, givenAction, null);
     }
 
     private void updateAllRemoteServers() {

@@ -5,7 +5,10 @@ public enum Action {
     POWEROFF("poweroff"),
     POWERON("poweron"),
     REBOOT("reboot"),
-    RESET("reset"),;
+    RESET("reset"),
+    ADD_PLACEMENT_GROUP("add_to_placement_group"),
+    REMOVE_PLACEMENT_GROUP("remove_from_placement_group"),
+    CHANGE_SERVER_PROTECTION("change_protection");
 
     public final String path;
 
