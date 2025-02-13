@@ -52,6 +52,10 @@ public class ServerChangeListener implements PropertyChangeListener {
                 logger.info("Add Server to placement group has been called. Instructing Hetzner to add the server to the given placement group {}", evt.getNewValue());
                 HetznerCloud.getInstance().getServiceManager().getServerService().addServerToPlacementGroup(server, (Integer) evt.getNewValue());
             }
+            case "removeFromPlacementGroup" -> {
+                logger.info("Remove Server from placement group has been called. Instructing Hetzner to remove the server from a placement group");
+                HetznerCloud.getInstance().getServiceManager().getServerService().removeServerFromPlacementGroup(server);
+            }
             default -> {
                 logger.info("Server changed: {}", evt.getPropertyName());
                 logger.info("Server: {} -> {}", evt.getOldValue(), evt.getNewValue());

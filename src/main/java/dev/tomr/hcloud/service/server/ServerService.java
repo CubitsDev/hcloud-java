@@ -150,6 +150,10 @@ public class ServerService {
         sendServerAction(server, ADD_PLACEMENT_GROUP, new PlacementGroupBody(serverId));
     }
 
+    public void removeServerFromPlacementGroup(Server server) {
+        sendServerAction(server, REMOVE_PLACEMENT_GROUP);
+    }
+
     private void sendServerAction(Server server, dev.tomr.hcloud.service.action.Action givenAction, HetznerJsonObject body) {
         List<String> hostAndKey = HetznerCloud.getInstance().getHttpDetails();
         String httpUrl = String.format("%sservers/%d/actions/%s", hostAndKey.get(0), server.getId(), givenAction.path);

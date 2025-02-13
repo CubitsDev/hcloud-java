@@ -149,6 +149,10 @@ public class Server implements Serializable {
         propertyChangeSupport.firePropertyChange("addToPlacementGroup", null, placementGroup.getId());
     }
 
+    public void removeFromPlacementGroup() {
+        propertyChangeSupport.firePropertyChange("removeFromPlacementGroup", null, null);
+    }
+
     // These are the current setters that will send an API request (PUT /servers) when actions begin to be added, they will also likely be triggered by setters
 
     /**

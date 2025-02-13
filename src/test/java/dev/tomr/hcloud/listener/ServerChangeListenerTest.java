@@ -7,7 +7,6 @@ import dev.tomr.hcloud.service.server.ServerService;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
-import org.mockito.Spy;
 
 import java.beans.PropertyChangeEvent;
 import java.util.Map;
